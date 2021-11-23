@@ -1,0 +1,35 @@
+<div class="alert alert-warning text-center animate__animated animate__fadeInDown animate__faster" role="alert" style="display: none;" #alertWarning>
+    Hay campos inválidos
+</div>
+<div class="container-fluid">
+
+    <form [formGroup]="formulario" (ngSubmit)="entrar()">
+        <div class="form-wrapper">
+            <h1 id="titulo-login">Entrar</h1>
+
+            <!-- Correo -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo</label>
+                <input type="email" class="form-control" id="email" name="email" formControlName="correo"
+                    placeholder="algo@algo.com"
+                    [ngClass]="{'border-danger': !validarCorreo && !formulario.controls.correo.pristine}">
+            </div>
+
+            <!-- password -->
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" formControlName="password"
+                    placeholder="********"
+                    [ngClass]="{'border-danger': !validarPassword && !formulario.controls.password.pristine}">
+            </div>
+
+            <div class="mb-3">
+                <label class="chk-password">Olvidé mi contraseña</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Entrar</button>
+        </div>
+    </form>
+
+
+</div>

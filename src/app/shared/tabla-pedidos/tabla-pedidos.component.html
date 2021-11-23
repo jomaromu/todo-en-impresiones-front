@@ -1,0 +1,62 @@
+<div id="header" class="wrapperElement">
+    <button routerLink="/dashboard/nuevo-pedido">
+        <i class="fas fa-plus" style="margin-right: 7px;"></i>
+        Nuevo Pedido
+    </button>
+</div>
+<div id="wrapper">
+
+    <div id="body" class="wrapperElement">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Teléfono</th>
+                    <th scope="col">Sucursal</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Saldo</th>
+                    <th scope="col">Prioridad</th>
+                    <th scope="col">Etapa</th>
+                    <th scope="col">Estado</th> <!-- select -->
+                    <th scope="col">Diseñador</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr *ngFor="let pedido of pedidos?.pedidosDB" (dblclick)="abrirPedido(pedido)"
+                    [ngClass]="{'cambios':pedido.estado_pedido === 1, 'aprobados':pedido.estado_pedido === 2, 'corregir':pedido.estado_pedido === 3, 'impreso':pedido.estado_pedido === 4}">
+                    <td>{{pedido.idReferencia}}</td>
+                    <td>{{pedido.fecha_alta}}</td>
+                    <td>{{pedido.Cliente[0]?.nombre}}</td>
+                    <td>{{pedido.Cliente[0]?.telefono}}</td>
+                    <td>{{pedido.Sucursal[0]?.nombre}}</td>
+                    <td>{{pedido.total}}</td>
+                    <td>{{pedido.saldo}}</td>
+                    <td>
+                        <span *ngFor="let prioridad of prioridades">
+                            <span *ngIf="pedido.prioridad_pedido === prioridad.importancia">
+                                <span *ngIf="prioridad.importancia === 0">🔥</span>
+                                {{prioridad.nombre}}
+                                <span *ngIf="prioridad.importancia === 0">🔥</span>
+                            </span>
+                        </span>
+
+                    </td>
+                    <td>
+                        <span *ngFor="let etapa of etapas">
+                            <span *ngIf="pedido.etapa_pedido === etapa.id">{{etapa.nombre}}</span>
+                        </span>
+                    </td>
+                    <td>
+                        <span *ngFor="let estado of estados">
+                            <span *ngIf="pedido.estado_pedido === estado.id">{{estado.nombre}}</span>
+                        </span>
+                    </td>
+                    <td>{{pedido.AsignadoA[0]?.nombre}} {{pedido.AsignadoA[0]?.apellido}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

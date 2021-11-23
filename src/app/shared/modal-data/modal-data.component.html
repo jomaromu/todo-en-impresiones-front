@@ -1,0 +1,22 @@
+<ng-template #modal>
+  <div class="modal-header" *ngIf="data.tipo === 'ver-diseniadores'">
+    <h4 class="modal-title" id="modal-basic-title">{{data.tipo}}</h4>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="cerrarModal()">Cerrar</button>
+    </div>
+  </div>
+
+  <div class="modal-header" *ngIf="data.tipo === 'ver-productos'">
+    <h4 class="modal-title" id="modal-basic-title">{{data.tipo}}</h4>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="cerrarModal()">Cerrar</button>
+    </div>
+  </div>
+
+  <div class="modal-header" *ngIf="data.tipo === 'subir-archivos'">
+    <h4 class="modal-title" id="modal-basic-title">{{data.tipo}}</h4>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="cerrarModal()">Cerrar</button>
+    </div>
+  </div>
+</ng-template>

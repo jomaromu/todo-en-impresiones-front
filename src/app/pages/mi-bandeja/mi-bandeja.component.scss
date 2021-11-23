@@ -1,0 +1,36 @@
+@import '../../../styles';
+
+#wrapper {
+    // background-color: pink;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 120px auto;
+    font-family: $font-family;
+    // margin: 120px auto;
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: flex-start;
+    // align-items: center;
+}
+
+.borde-rojo {
+    border: 1px solid tomato;
+}
+
+#wrap-craeciones {
+    @include creaciones(800px, 320px);
+    margin: 0 auto;
+}
+
+#wrap-buttons-creacion {
+    // background-color: red;
+    // margin-top: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 320px;
+    position: absolute;
+    right: 25px;
+    bottom: 35px;
+}

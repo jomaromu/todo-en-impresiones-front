@@ -1,0 +1,27 @@
+[
+    {
+        "nombre": "Normal",
+        "id": 0,
+        "color": "#ffffff"
+    },
+    {
+        "nombre": "Cambios",
+        "id": 1,
+        "color": "#ea8a15"
+    },
+    {
+        "nombre": "Aprobados",
+        "id": 2,
+        "color": "#1bc453"
+    },
+    {
+        "nombre": "Corregir",
+        "id": 3,
+        "color": "#ea3f10"
+    },
+    {
+        "nombre": "Impreso",
+        "id": 4,
+        "color": "#13b3db"
+    }
+]

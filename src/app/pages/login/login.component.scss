@@ -1,0 +1,45 @@
+@import '../../../styles';
+
+.container-fluid {
+    @include ancho-alto(100vw, 100vh);
+    @include flex-center;
+    background: lighten($gray, 5);
+}
+
+.border-danger {
+    border: 1px solid $danger;
+}
+
+.alert-warning {
+    @include alert-warning;
+}
+
+form {
+    background-color: $white;
+    padding: 25px;
+    width: 350px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 6px 7px $gray;
+}
+
+#titulo-login {
+    width: 100%;
+    text-align: center;
+}
+
+.chk-password {
+    font-family: $font-family;
+    font-weight: bolder;
+    color: darken($primary, 10);
+    cursor: pointer;
+    transition: 0.3s all ease-in-out;
+    font-size: map-get($map: $map-fonts, $key: 'xm');
+}
+
+.chk-password:hover {
+    color: darken($primary, 15);
+}
+
+button {
+    width: 100%;
+}

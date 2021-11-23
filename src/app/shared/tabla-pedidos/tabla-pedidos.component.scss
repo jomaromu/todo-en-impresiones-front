@@ -1,0 +1,70 @@
+@import '../../../styles.scss';
+
+.cambios {
+    @include estado-pedido(#ea8a15, $white);
+}
+
+.aprobados {
+    @include estado-pedido(#1bc453, $white);
+}
+
+.corregir {
+    @include estado-pedido(#ea3f10, $white);
+}
+
+.impreso {
+    @include estado-pedido(#13b3db, $white);
+}
+
+.fondoTomato {
+    background-color: rgba(220, 53, 69, 1);
+
+    td {
+
+        color: darken($color: $white, $amount: 15) !important;
+    }
+}
+
+#wrapper {
+
+    // border: 1px solid blue;
+    position: relative;
+    margin-bottom: 50px;
+    // width: 900px;
+    width: 95%;
+    margin: 15px auto;
+}
+
+#header {
+
+    // background-color: yellow;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 35px auto 10px;
+    position: relative;
+    width: 95%;
+
+    button {
+        @include button(null, $primary, $gray);
+    }
+
+    button:hover {
+        background-color: $secondary;
+    }
+}
+
+#body {
+
+    @extend %tabla-basic;
+    // background-color: red;
+    width: 100%;
+    margin: 0 auto;
+
+    table {
+        td {
+            cursor: pointer;
+        }
+    }
+}
