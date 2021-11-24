@@ -1,19 +1,31 @@
 @import '../../../styles.scss';
 
-.cambios {
-    @include estado-pedido(#ea8a15, $white);
+.diseniado {
+    @include estado-pedido(#c2c21b, $white);
 }
 
-.aprobados {
-    @include estado-pedido(#1bc453, $white);
+.correccion {
+    @include estado-pedido(#c4211b, $white);
 }
 
-.corregir {
-    @include estado-pedido(#ea3f10, $white);
+.aprobado {
+    @include estado-pedido(#099e22, $white);
 }
 
 .impreso {
-    @include estado-pedido(#13b3db, $white);
+    @include estado-pedido(#089ec4, $white);
+}
+
+.devuelto {
+    @include estado-pedido(#a008a5, $white);
+}
+
+.prod-solu {
+    @include estado-pedido(#3b3a3a, $white);
+}
+
+.prod-per {
+    @include estado-pedido(#3b3a3a, $white);
 }
 
 .fondoTomato {

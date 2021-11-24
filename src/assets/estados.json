@@ -1,27 +1,42 @@
 [
     {
-        "nombre": "Normal",
+        "nombre": "Sin diseñar",
         "id": 0,
         "color": "#ffffff"
     },
     {
-        "nombre": "Cambios",
+        "nombre": "Diseñado",
         "id": 1,
-        "color": "#ea8a15"
+        "color": "#e0f731"
     },
     {
-        "nombre": "Aprobados",
+        "nombre": "Corrección",
         "id": 2,
         "color": "#1bc453"
     },
     {
-        "nombre": "Corregir",
+        "nombre": "Aprobado",
         "id": 3,
         "color": "#ea3f10"
     },
     {
         "nombre": "Impreso",
         "id": 4,
+        "color": "#13b3db"
+    },
+    {
+        "nombre": "Devuelto Prod",
+        "id": 5,
+        "color": "#13b3db"
+    },
+    {
+        "nombre": "Prod. Solution",
+        "id": 6,
+        "color": "#13b3db"
+    },
+    {
+        "nombre": "Prod pesonaliza",
+        "id": 7,
         "color": "#13b3db"
     }
 ]

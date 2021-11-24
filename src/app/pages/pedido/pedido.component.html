@@ -201,8 +201,8 @@
                         <div id="wrap-input-producto" class="inputs-producto">
                             <label for="producto" class="form-label">
                                 Producto:
-                                <i class="far fa-eye" style="margin-left: 5px;" role="button"
-                                    (click)="verPedidos()"></i>
+                                <!-- <i class="far fa-eye" style="margin-left: 5px;" role="button"
+                                    (click)="verPedidos()"></i> -->
                             </label>
                             <input type="text" class="form-control" [attr.data-idProducto]="producto?._id" id="producto"
                                 formControlName="producto" (keyup)="detectarProducto($event)" autocomplete="off"
@@ -320,34 +320,12 @@
             </div>
         </div>
 
-        <!-- panel 3 -->
+        <!-- Archivo -->
         <div class="tab-pane fade" id="archivos" role="tabpanel">
             <div class="wrapper-tap" id="tap-archivos">
                 <h6>Información de archivos</h6>
                 <div id="archivos">
 
-                    <!-- seleccionar tipo -->
-                    <div id="wrap-select-tipo">
-                        <p>Seleccionar por:</p>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                            <label class="form-check-label" for="flexCheckDefault">
-                                Originales
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                            <label class="form-check-label" for="flexCheckChecked">
-                                Aprobados
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked">
-                            <label class="form-check-label" for="flexCheckChecked">
-                                Rechazados
-                            </label>
-                        </div>
-                    </div>
                     <div id="wrap-tabla" class="mb-3">
                         <button (click)="addArchivo()">
                             <i class="fas fa-plus"></i>
@@ -360,16 +338,20 @@
                                     <th>Creador</th>
                                     <th>Fecha de alta</th>
                                     <th>Tipo</th>
+                                    <th>Enlace</th>
                                     <th>Controles</th>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 <tr>
-                                    <td>algo</td>
-                                    <td>algo</td>
-                                    <td>algo</td>
-                                    <td>algo</td>
+                                    <td>Ninguno</td>
+                                    <td>Andres</td>
+                                    <td>21/12/2021</td>
+                                    <td>Aprobado</td>
+                                    <td>
+                                        <a href="#">Abrir</a>
+                                    </td>
                                     <td>
                                         <i class="fas fa-trash-alt text-danger" role="button"></i>
                                     </td>
@@ -378,11 +360,6 @@
                         </table>
                     </div>
                 </div>
-                <!-- <div class="archivos">Aprobados</div>
-                <div class="archivos">Rechazados</div> -->
-                <!-- <div id="wrap-subir-archivos">
-                    <input class="form-control form-control-sm mb-3" id="formFileSm" type="file">
-                </div> -->
             </div>
         </div>
 

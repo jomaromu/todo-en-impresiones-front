@@ -38,6 +38,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
     EffectsModule.forRoot(effectsArray),
     StoreModule.forRoot(globalReducerApp, {}),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    NgbModule,
     NgbModalModule
   ],
   providers: [],

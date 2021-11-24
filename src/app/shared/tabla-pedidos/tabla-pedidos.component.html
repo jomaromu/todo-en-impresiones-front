@@ -24,9 +24,9 @@
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody style="font-size: 15px;">
                 <tr *ngFor="let pedido of pedidos?.pedidosDB" (dblclick)="abrirPedido(pedido)"
-                    [ngClass]="{'cambios':pedido.estado_pedido === 1, 'aprobados':pedido.estado_pedido === 2, 'corregir':pedido.estado_pedido === 3, 'impreso':pedido.estado_pedido === 4}">
+                    [ngClass]="{'diseniado':pedido.estado_pedido === 1, 'correccion':pedido.estado_pedido === 2, 'aprobado':pedido.estado_pedido === 3, 'impreso':pedido.estado_pedido === 4, 'devuelto':pedido.estado_pedido === 5, 'prod-solu':pedido.estado_pedido === 6, 'prod-per':pedido.estado_pedido === 7}">
                     <td>{{pedido.idReferencia}}</td>
                     <td>{{pedido.fecha_alta}}</td>
                     <td>{{pedido.Cliente[0]?.nombre}}</td>

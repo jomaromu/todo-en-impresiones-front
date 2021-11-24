@@ -11,12 +11,13 @@
         "nombre": "Producción",
         "id": 2
     },
+    
     {
-        "nombre": "Entregado",
+        "nombre": "Por entregar",
         "id": 3
     },
     {
-        "nombre": "Por entregar",
+        "nombre": "Entregado",
         "id": 4
     }
 ]

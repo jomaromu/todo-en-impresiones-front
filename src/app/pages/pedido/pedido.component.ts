@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PedidoService } from '../../services/pedido.service';
 import { Store } from '@ngrx/store';
@@ -68,8 +68,11 @@ export class PedidoComponent implements OnInit {
     private sucursalService: SucursalService,
     private store: Store<AppState>,
     private fb: FormBuilder,
-    private http: HttpClient
-  ) { }
+    private http: HttpClient,
+    private cdref: ChangeDetectorRef
+  ) {
+    // this.cdref.detectChanges();
+  }
 
   ngOnInit(): void {
     this.obtenerPedido();
@@ -563,7 +566,7 @@ export class PedidoComponent implements OnInit {
   // Archivo
 
   addArchivo(): void {
-    this.store.dispatch(modalActions.cargarModal({ tipo: 'subir-archivos', estado: true }));
+    this.store.dispatch(modalActions.cargarModal({ tipo: 'subir-archivos', estado: true, data: this.pedido._id }));
   }
 
 }
