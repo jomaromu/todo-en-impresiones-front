@@ -18,7 +18,7 @@ export class ArchivosService {
     const url = `${environment.url}/archivo/nuevoArchivo`;
     const header = new HttpHeaders({ token, pedido });
 
-    return this.http.post(url, data, { headers: header })
+    return this.http.post(url, data, { headers: header, reportProgress: true, observe: 'events' })
       .pipe(map(resp => resp));
   }
 }

@@ -11,16 +11,35 @@ h6 {
     }
 }
 
-.wrap-subir-archivos {
+#modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba($gray, 0.7);
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapper {
     padding: 15px;
+    background-color: $white;
+    border-radius: 5px;
 
     h6 {
         margin-bottom: 25px;
     }
+}
 
-    // div:not(.progress-bar) {
-    //     margin-bottom: 15px;
-    // }
+.borde-rojo {
+    border: 1px solid tomato;
+}
+
+// archivo
+#subir-archivo {
 
     .group-btn {
 
@@ -45,9 +64,14 @@ h6 {
         button:first-child {
             @include button('', $white, $primary);
         }
+
         button:last-child {
             @include button('', $primary, $white);
             margin-left: 25px;
         }
+    }
+
+    #divProgres {
+        display: none;
     }
 }

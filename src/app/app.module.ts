@@ -18,10 +18,6 @@ import { globalReducerApp } from './reducers/globarReducers';
 import { LoginComponent } from './pages/login/login.component';
 import { EffectsModule } from '@ngrx/effects';
 import { effectsArray } from './services/index';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-// Bootstrap
-import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -38,8 +34,6 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
     EffectsModule.forRoot(effectsArray),
     StoreModule.forRoot(globalReducerApp, {}),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
-    NgbModule,
-    NgbModalModule
   ],
   providers: [],
   bootstrap: [AppComponent]
