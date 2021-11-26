@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PedidoService } from '../../services/pedido.service';
 import { Store } from '@ngrx/store';
@@ -21,6 +21,9 @@ import { ProductoPedidoService } from '../../services/producto-pedido.service';
 import { Productospedido, ProductoPedido } from '../../interfaces/producto-pedido';
 import { Producto } from 'src/app/interfaces/producto';
 import { ProductoDB } from '../../interfaces/producto';
+import { ArchivosService } from '../../services/archivos.service';
+import { Archivo, ArchivoDB } from '../../interfaces/archivo';
+import { WebsocketsService } from '../../services/sockets/websockets.service';
 
 @Component({
   selector: 'app-pedido',
@@ -57,6 +60,7 @@ export class PedidoComponent implements OnInit {
     total: null
   };
   loadModal = false;
+  archivo: Archivo;
 
   constructor(
     private route: ActivatedRoute,
@@ -69,7 +73,9 @@ export class PedidoComponent implements OnInit {
     private store: Store<AppState>,
     private fb: FormBuilder,
     private http: HttpClient,
-    private cdref: ChangeDetectorRef
+    private cdref: ChangeDetectorRef,
+    private archivoService: ArchivosService,
+    private wsService: WebsocketsService
   ) {
     // this.cdref.detectChanges();
   }
@@ -77,6 +83,9 @@ export class PedidoComponent implements OnInit {
   ngOnInit(): void {
     this.obtenerPedido();
     this.cargarFormulario();
+    this.cargarArchivos();
+    this.cargarSeguimiento();
+    this.escucharSocketsArchivos();
     // this.cargarProductos();
     // this.cagarUsuarioEtapa();
   }
@@ -121,6 +130,7 @@ export class PedidoComponent implements OnInit {
           .subscribe((pedido: Pedido) => {
             // console.log(pedido);
             this.pedido = pedido.pedidoDB;
+            // console.log(this.pedido);
             this.cargarSelects();
             this.cargarProductosPedidos(pedido.pedidoDB);
 
@@ -564,9 +574,96 @@ export class PedidoComponent implements OnInit {
 
 
   // Archivo
-
   addArchivo(): void {
     this.store.dispatch(modalActions.cargarModal({ tipo: 'subir-archivos', estado: true, data: this.pedido._id }));
+  }
+
+  cargarArchivos(): void {
+
+    const idPedido = this.route.snapshot.queryParamMap.get('id');
+
+    this.store.select('login').pipe(first())
+      .subscribe(worker => {
+
+        this.archivoService.obtenerArchivosPorPedido(worker.token, idPedido)
+          .subscribe((archivo: Archivo) => {
+            this.archivo = archivo;
+          });
+      });
+  }
+
+  eliminarArchivo(idArchivo: string, idPedido: string): void {
+
+    Swal.fire({
+      title: 'Mensaje',
+      text: '¿Desea eliminar este archivo?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Eliminar archivo',
+      cancelButtonText: 'Cancelar'
+
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        this.store.dispatch(loadingActions.cargarLoading());
+
+        this.store.select('login').pipe(first())
+          .subscribe(worker => {
+
+            const data = {
+              id: idArchivo,
+              pedido: idPedido,
+              token: worker.token
+            };
+
+            this.archivoService.eliminarArchivos(data)
+              .subscribe((archivo: Archivo) => {
+
+                if (archivo.ok === true) {
+
+                  this.store.dispatch(loadingActions.quitarLoading());
+
+                  Swal.fire(
+                    'Mensaje',
+                    `${archivo.mensaje}`,
+                    'info'
+                  );
+
+                } else {
+
+                  this.store.dispatch(loadingActions.quitarLoading());
+
+                  Swal.fire(
+                    'Mensaje',
+                    `${archivo.mensaje}`,
+                    'error'
+                  );
+                }
+
+              });
+
+          });
+
+      }
+    });
+  }
+
+  escucharSocketsArchivos(): void {
+
+    this.wsService.escuchar('recibir-archivos')
+      .subscribe((data: any) => {
+        this.cargarArchivos();
+      });
+  }
+
+  // seguimiento
+  cargarSeguimiento(): void {
+
+    // console.log(this.productosPedidos);
+    console.log('ok');
+    console.log('ok');
   }
 
 }

@@ -8,6 +8,7 @@ import { ArchivosService } from '../../services/archivos.service';
 import { first } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { HttpEventType } from '@angular/common/http';
+import { WebsocketsService } from '../../services/sockets/websockets.service';
 
 @Component({
   selector: 'app-modal-data',
@@ -40,7 +41,8 @@ export class ModalDataComponent implements OnInit {
     private store: Store<AppState>,
     private fb: FormBuilder,
     private cdref: ChangeDetectorRef,
-    private archivoService: ArchivosService
+    private archivoService: ArchivosService,
+    private wsService: WebsocketsService
   ) { }
 
   ngOnInit(): void {
@@ -176,11 +178,14 @@ export class ModalDataComponent implements OnInit {
             if (event.body) {
 
               if (event.body.ok === true) {
+
                 Swal.fire(
                   'Mensaje',
                   `${event.body.mensaje}`,
                   'info'
                 );
+
+                this.wsService.emitir('cargar-archivos');
 
               } else if (event.body.ok === false) {
 

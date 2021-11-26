@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { UserEffects } from '../effects/user.effects';\nexport const effectsArray = [UserEffects];","map":null,"metadata":{},"sourceType":"module"}

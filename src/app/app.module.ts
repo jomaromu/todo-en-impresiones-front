@@ -19,10 +19,15 @@ import { LoginComponent } from './pages/login/login.component';
 import { EffectsModule } from '@ngrx/effects';
 import { effectsArray } from './services/index';
 
+// socket
+import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
+const config: SocketIoConfig = { url: environment.url, options: {} };
+
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -34,8 +39,10 @@ import { effectsArray } from './services/index';
     EffectsModule.forRoot(effectsArray),
     StoreModule.forRoot(globalReducerApp, {}),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    SocketIoModule.forRoot(config)
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  exports: []
 })
 export class AppModule { }

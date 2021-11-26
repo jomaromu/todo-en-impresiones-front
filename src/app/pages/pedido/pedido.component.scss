@@ -306,8 +306,14 @@ h6 {
 
 #tap-archivos {
 
+    a {
+        font: {
+            weight: bold;
+        }
+    }
+
     #archivos {
-        margin-top: 25px;
+        margin: 0 0 25px;
 
         #wrap-tabla {
             margin-top: 40px;

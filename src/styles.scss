@@ -10,6 +10,10 @@ body {
     overflow: auto;
 }
 
+a {
+    text-decoration: none;
+}
+
 $primary: rgb(0, 177, 157);
 $secondary: rgb(0, 159, 141);
 $gray: rgb(229, 229, 229);

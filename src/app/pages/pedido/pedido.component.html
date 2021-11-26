@@ -344,27 +344,85 @@
                             </thead>
 
                             <tbody>
-                                <tr>
-                                    <td>Ninguno</td>
-                                    <td>Andres</td>
-                                    <td>21/12/2021</td>
-                                    <td>Aprobado</td>
+                                <tr *ngFor="let archivo of archivo?.archivosDB">
+                                    <td>{{archivo.nombre_archivo}}</td>
+                                    <td>{{archivo.idCreador.nombre}} {{archivo.idCreador.apellido}}</td>
+                                    <td>{{archivo.fecha}}</td>
+                                    <td *ngIf="archivo.tipo === 0">Normal</td>
+                                    <td *ngIf="archivo.tipo === 1">Corregir</td>
+                                    <td *ngIf="archivo.tipo === 2">Aprobado</td>
                                     <td>
-                                        <a href="#">Abrir</a>
+                                        <a [href]="archivo.nombre_archivo | enlaces" target="_blank">Abrir</a>
                                     </td>
                                     <td>
-                                        <i class="fas fa-trash-alt text-danger" role="button"></i>
+                                        <i class="fas fa-trash-alt text-danger"
+                                            (click)="eliminarArchivo(archivo._id, pedido._id)" role="button"></i>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+            </div>
+            <div id="wrap-buttons-acciones">
+
+                <!-- botones acciones -->
+                <!-- <button class="buttons" type="submit">Guardar Cambios</button> -->
+                <span></span>
+
+                <div id="wrap-acciones">
+                    <button class="buttons" type="button" data-bs-toggle="collapse"
+                        href="#collapse-acciones">Imprimir</button>
+
+                    <div class="collapse multi-collapse" id="collapse-acciones">
+                        <div class="card card-body">
+                            <button>Imprimir factura</button>
+                            <button>Imprimir recibo</button>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
 
-        <!-- panel 4 -->
-        <div class="tab-pane fade" id="seguimiento" role="tabpanel">Seg</div>
+        <!-- Seguimiento 4 -->
+        <div class="tab-pane fade" id="seguimiento" role="tabpanel">
+            <div class="wrapper-tap" id="tap-seguimiento" style="width: 99%;">
+                <h6>Información seguimiento</h6>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                            <th>Seg. Diseño</th>
+                            <th>Seg. Producción</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr *ngFor="let productoPedido of productosPedidos; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>{{productoPedido?.producto.nombre}}</td>
+                            <td>{{productoPedido?.cantidad}}</td>
+                            <td>{{productoPedido?.precio | currency:'USD':'symbol'}}</td>
+                            <td>
+                                <div>
+                                    <textarea class="form-control" id="seg-dise" rows="3"></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    <textarea class="form-control" id="seg-prod" rows="3"></textarea>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
         <!-- panel 5 -->
         <div class="tab-pane fade" id="pagos" role="tabpanel">Pag</div>

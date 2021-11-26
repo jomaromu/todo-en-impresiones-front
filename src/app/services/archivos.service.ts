@@ -21,4 +21,34 @@ export class ArchivosService {
     return this.http.post(url, data, { headers: header, reportProgress: true, observe: 'events' })
       .pipe(map(resp => resp));
   }
+
+  obtenerTodosArchivos(token: string): Observable<any> {
+
+    const url = `${environment.url}/archivo/obtenerTodosArchivos`;
+
+    const header = new HttpHeaders({ token });
+
+    return this.http.get(url, { headers: header })
+      .pipe(map(resp => resp));
+  }
+
+  obtenerArchivosPorPedido(token: string, idPedido: string): Observable<any> {
+
+    const url = `${environment.url}/archivo/obtenerArchivosPorPedido`;
+
+    const header = new HttpHeaders({ token, idPedido });
+
+    return this.http.get(url, { headers: header })
+      .pipe(map(resp => resp));
+  }
+
+  eliminarArchivos(data: any): Observable<any> {
+
+    const url = `${environment.url}/archivo/eliminarArhivoID`;
+
+    const header = new HttpHeaders({ token: data.token, id: data.id, pedido: data.pedido });
+
+    return this.http.delete(url, { headers: header })
+      .pipe(map(resp => resp));
+  }
 }

@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createAction } from '@ngrx/store';\nexport const cargarLoading = createAction('[Loading] Cargar Loading');\nexport const quitarLoading = createAction('[Loading] Quitar Loading');","map":null,"metadata":{},"sourceType":"module"}

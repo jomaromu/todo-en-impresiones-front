@@ -25,6 +25,9 @@ import { MetodosPagoComponent } from './metodos-pago/metodos-pago.component';
 import { CategoriasComponent } from './categorias/categorias.component';
 import { PedidoComponent } from './pedido/pedido.component';
 
+// pipes
+import { EnlacesPipe } from '../pipes/enlaces.pipe';
+
 
 @NgModule({
   declarations: [
@@ -44,7 +47,8 @@ import { PedidoComponent } from './pedido/pedido.component';
     ArchivosPedidoComponent,
     MetodosPagoComponent,
     CategoriasComponent,
-    PedidoComponent],
+    PedidoComponent,
+    EnlacesPipe],
   imports: [
     CommonModule,
     RoutingPagesModule,
