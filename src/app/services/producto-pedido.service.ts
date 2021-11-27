@@ -40,5 +40,15 @@ export class ProductoPedidoService {
     return this.http.delete(url, { headers: header })
       .pipe(map(resp => resp));
   }
+
+  editarProductoPedido(data: any): Observable<any> {
+
+    const url = `${environment.url}/productoPedido/editarProductoPedido`;
+    const header = new HttpHeaders({ token: data.token, id: data.id });
+
+    return this.http.put(url, data, { headers: header })
+      .pipe(map(resp => resp));
+
+  }
 }
 

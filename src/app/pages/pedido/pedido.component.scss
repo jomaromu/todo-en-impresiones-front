@@ -8,7 +8,7 @@
 
     // border: 1px solid red;
     width: 850px;
-    min-height: 500px;
+    min-height: 100px;
     background-color: $white;
     margin: 100px auto;
     font-family: $font-family;
@@ -38,7 +38,6 @@
         }
     }
 }
-
 
 h6 {
     // border: 1px solid red;
@@ -332,6 +331,30 @@ h6 {
 
             button:hover {
                 box-shadow: $box-shadow !important;
+            }
+        }
+    }
+}
+
+// seguimiento
+#tap-seguimiento {
+
+    table {
+        margin-bottom: 100px;
+
+        tr,
+        td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        i {
+            font-size: map-get($map: $map-fonts, $key: 'smlx');
+            color: $secondary;
+            transition: 0.3s ease all;
+
+            &:hover{
+                color: darken($color: $secondary, $amount: 10);
             }
         }
     }

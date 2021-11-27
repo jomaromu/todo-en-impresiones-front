@@ -84,7 +84,6 @@ export class PedidoComponent implements OnInit {
     this.obtenerPedido();
     this.cargarFormulario();
     this.cargarArchivos();
-    this.cargarSeguimiento();
     this.escucharSocketsArchivos();
     // this.cargarProductos();
     // this.cagarUsuarioEtapa();
@@ -415,7 +414,6 @@ export class PedidoComponent implements OnInit {
           .pipe(first())
           .subscribe((pedidoDB: Pedido) => {
             this.productosPedidos = pedidoDB.pedidoDB.productos_pedidos;
-
             // console.log(pedido);
             this.costoDelPedido(this.productosPedidos, pedido.itbms);
 
@@ -659,11 +657,46 @@ export class PedidoComponent implements OnInit {
   }
 
   // seguimiento
-  cargarSeguimiento(): void {
+  guardarSeguimiento(idProductoPedido: string, idPedido: string, valueSeg: any, valueProd: any): void {
 
-    // console.log(this.productosPedidos);
-    console.log('ok');
-    console.log('ok');
+    this.store.dispatch(loadingActions.cargarLoading());
+
+    this.store.select('login').pipe(first())
+      .subscribe(worker => {
+
+        const data = {
+          token: worker.token,
+          id: idProductoPedido,
+          seguimiento_disenio: valueSeg.value,
+          seguimiento_produccion: valueProd.value
+        };
+
+        this.productoPedidoService.editarProductoPedido(data)
+          .subscribe((productoPedido: ProductoPedido) => {
+
+            if (productoPedido.ok === true) {
+
+              Swal.fire(
+                'Mensaje',
+                `${productoPedido.mensaje}`,
+                'info'
+              );
+
+              this.store.dispatch(loadingActions.quitarLoading());
+
+            } else {
+              Swal.fire(
+                'Mensaje',
+                `${productoPedido.mensaje}`,
+                'error'
+              );
+
+              this.store.dispatch(loadingActions.quitarLoading());
+            }
+          });
+      });
+
+    // console.log(idProductoPedido, idPedido, valueSeg.value, valueProd.value);
   }
 
 }
