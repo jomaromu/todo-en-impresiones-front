@@ -190,7 +190,6 @@ h6 {
 }
 
 // producto
-
 #tap-producto {
     // border: 1px solid blue;
     min-height: 500px;
@@ -302,8 +301,9 @@ h6 {
 }
 
 // archivos
-
 #tap-archivos {
+
+    // margin: 50px 0 100px 0;
 
     a {
         font: {
@@ -312,7 +312,8 @@ h6 {
     }
 
     #archivos {
-        margin: 0 0 25px;
+        margin: 0 0 100px;
+        // margin: 50px 0 100px 0;
 
         #wrap-tabla {
             margin-top: 40px;
@@ -340,7 +341,7 @@ h6 {
 #tap-seguimiento {
 
     table {
-        margin-bottom: 100px;
+        margin: 50px 0 100px 0;
 
         tr,
         td {
@@ -353,8 +354,43 @@ h6 {
             color: $secondary;
             transition: 0.3s ease all;
 
-            &:hover{
+            &:hover {
                 color: darken($color: $secondary, $amount: 10);
+            }
+        }
+    }
+}
+
+// pagos
+#tap-pagos {
+
+    a {
+        font: {
+            weight: bold;
+        }
+    }
+
+    #pagos {
+        margin: 0 0 100px;
+        // margin: 50px 0 100px 0;
+
+        #wrap-tabla {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+
+            button {
+                @include button('', $primary, $gray);
+                align-self: flex-end;
+                margin-bottom: 25px;
+
+                font: {
+                    weight: 200;
+                }
+            }
+
+            button:hover {
+                box-shadow: $box-shadow !important;
             }
         }
     }

@@ -1,7 +1,8 @@
-<app-busqueda [pedidos]="pedidos" (emitirPedidos)="recibirPedidos($event)" ></app-busqueda>
+<app-busqueda [pedidos]="pedidos" (emitirPedidos)="recibirPedidos($event)"></app-busqueda>
 
 <div id="wrapper">
-    <div id="wrap-craeciones" class="animate__animated" #wrapCreaciones>
+    <div id="wrap-craeciones" class="animate__animated" #wrapCreaciones
+        *ngIf="worker?.usuario?.colaborador_role === 'SuperRole'">
 
         <div id="wrap-head">
 

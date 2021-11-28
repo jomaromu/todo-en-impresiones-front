@@ -90,4 +90,13 @@ export class PedidoService {
     return this.http.get(url, { headers: header })
       .pipe(map(resp => resp));
   }
+
+  obtenerPedidosPorRole(data: any): Observable<any> {
+
+    const url = `${environment.url}/pedidos/obtenerPedidosPorRole`;
+    const header = new HttpHeaders({ token: data.token, role: data.role, idSUcursalWorker: data.idSUcursalWorker });
+
+    return this.http.get(url, { headers: header })
+      .pipe(map(resp => resp));
+  }
 }

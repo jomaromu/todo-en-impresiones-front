@@ -61,6 +61,10 @@ export class PedidoComponent implements OnInit {
   };
   loadModal = false;
   archivo: Archivo;
+  diseniadorFake = {
+    _id: null,
+    nombre: 'Seleccionar'
+  };
 
   constructor(
     private route: ActivatedRoute,
@@ -129,7 +133,6 @@ export class PedidoComponent implements OnInit {
           .subscribe((pedido: Pedido) => {
             // console.log(pedido);
             this.pedido = pedido.pedidoDB;
-            // console.log(this.pedido);
             this.cargarSelects();
             this.cargarProductosPedidos(pedido.pedidoDB);
 
@@ -146,6 +149,7 @@ export class PedidoComponent implements OnInit {
 
         const cargarFechaEntrega = () => {
           this.forma.controls.fechaEntrega.setValue(this.pedido.fecha_entrega);
+          // console.log(this.pedido);
         };
 
         const cargarPrioridad = () => {
@@ -183,14 +187,24 @@ export class PedidoComponent implements OnInit {
 
         };
 
-        const cargarDiseniador = () => {
+        const cargarDiseniadores = () => {
 
           this.userService.obtenerUsuariosRole(worker.token, 'DiseniadorRole')
             .subscribe((data: any) => {
               this.diseniadores = data.usuariosDB;
-              this.forma.controls.diseniador.setValue(data.usuariosDB[0]._id);
+              // this.forma.controls.diseniador.setValue(data.usuariosDB[0]._id);
+              // console.log(this.diseniadores);
             });
 
+        };
+
+        const cargarDiseniador = () => {
+
+          if (!this.pedido.asignado_a) {
+            this.forma.controls.diseniador.setValue(this.diseniadorFake._id);
+          } else {
+            this.forma.controls.diseniador.setValue(this.pedido.asignado_a._id);
+          }
         };
 
         const cargarVendedor = () => {
@@ -212,14 +226,15 @@ export class PedidoComponent implements OnInit {
             });
         };
 
+        cargarFechaEntrega();
+        cargarVendedor();
         cargarPrioridad();
         cargarEtapa();
         cargarEstado();
         cargarOrigen();
-        cargarDiseniador();
-        cargarVendedor();
+        cargarDiseniadores();
         cargarSucursales();
-        cargarFechaEntrega();
+        cargarDiseniador();
 
       });
   }
@@ -240,15 +255,15 @@ export class PedidoComponent implements OnInit {
       const data = {
         id: this.pedido._id,
         sucursal: this.forma.controls.sucursal.value,
-        etapa_pedido: this.forma.controls.etapaPedido.value,
-        prioridad_pedido: this.forma.controls.prioridad.value,
+        etapa_pedido: Number(this.forma.controls.etapaPedido.value),
+        prioridad_pedido: Number(this.forma.controls.prioridad.value),
         asignado_a: this.forma.controls.diseniador.value,
-        estado_pedido: this.forma.controls.estadoPedido.value,
+        estado_pedido: Number(this.forma.controls.estadoPedido.value),
         fecha_entrega: this.forma.controls.fechaEntrega.value,
         origen_pedido: this.forma.controls.origenVenta.value,
       };
 
-      if (data.etapa_pedido === 1 && data.asignado_a === null) {
+      if (data.etapa_pedido === 1 && (data.asignado_a === null || data.asignado_a === 'null')) {
 
         Swal.fire(
           'Mensaje',
@@ -256,37 +271,49 @@ export class PedidoComponent implements OnInit {
           'error'
         );
 
-        return;
-      }
+        this.store.dispatch(loadingActions.quitarLoading());
 
-      this.store.select('login').pipe(first())
-        .subscribe(worker => {
-          this.pedidoService.editarPedido(data, worker.token)
-            .subscribe((pedidoDB: any) => {
+      } else if (data.etapa_pedido !== 1 && (data.asignado_a === null || data.asignado_a === 'null')) {
 
-              this.store.dispatch(loadingActions.quitarLoading());
+        Swal.fire(
+          'Mensaje',
+          `Seleccione un diseñador`,
+          'error'
+        );
 
-              if (pedidoDB.ok === true) {
-                Swal.fire(
-                  'Mensaje',
-                  `${pedidoDB.mensaje}`,
-                  'info'
-                );
+        this.store.dispatch(loadingActions.quitarLoading());
 
-              } else {
+      } else {
 
-                Swal.fire(
-                  'Mensaje',
-                  `${pedidoDB.mensaje}`,
-                  'info'
-                );
+        this.store.select('login').pipe(first())
+          .subscribe(worker => {
+            this.pedidoService.editarPedido(data, worker.token)
+              .subscribe((pedidoDB: any) => {
 
                 this.store.dispatch(loadingActions.quitarLoading());
 
-              }
+                if (pedidoDB.ok === true) {
+                  Swal.fire(
+                    'Mensaje',
+                    `${pedidoDB.mensaje}`,
+                    'info'
+                  );
 
-            });
-        });
+                } else {
+
+                  Swal.fire(
+                    'Mensaje',
+                    `${pedidoDB.mensaje}`,
+                    'info'
+                  );
+
+                  this.store.dispatch(loadingActions.quitarLoading());
+
+                }
+
+              });
+          });
+      }
     }
 
   }
@@ -382,7 +409,17 @@ export class PedidoComponent implements OnInit {
 
         this.productoPedidoService.crearProductoPedido(data)
           .subscribe((pedidoDB: Pedido) => {
-            this.cargarProductosPedidos(pedidoDB.pedidoDB);
+
+            if (pedidoDB.ok === false) {
+              Swal.fire(
+                'Mensaje',
+                `${pedidoDB.mensaje}`,
+                'error'
+              );
+
+            } else if (pedidoDB.ok === true) {
+              this.cargarProductosPedidos(pedidoDB.pedidoDB);
+            }
           });
 
       });
@@ -410,6 +447,7 @@ export class PedidoComponent implements OnInit {
           token: worker.token,
           pedido: pedido._id
         };
+
         this.productoPedidoService.obtenerProductosPedido(data)
           .pipe(first())
           .subscribe((pedidoDB: Pedido) => {
@@ -699,4 +737,8 @@ export class PedidoComponent implements OnInit {
     // console.log(idProductoPedido, idPedido, valueSeg.value, valueProd.value);
   }
 
+  // pagos
+  addPago(): void {
+    console.log('add pago');
+  }
 }

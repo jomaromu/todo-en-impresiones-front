@@ -25,6 +25,7 @@ export class MiBandejaComponent implements OnInit {
   sucursales: Sucursal;
   usuarios: Array<UsuarioWorker>;
   pedidos: Pedido;
+  worker: Usuario;
 
   userFake = { id: 'null', nombre: 'Todas' };
 
@@ -46,11 +47,21 @@ export class MiBandejaComponent implements OnInit {
     this.store.select('login')
       .pipe(take(3))
       .subscribe(worker => {
+
+        this.worker = worker;
+
+        // console.log(this.worker);
+
         if (worker.ok === true && worker.usuario.colaborador_role === 'SuperRole') {
           this.role = worker.usuario.colaborador_role;
           this.formularioAdmin();
           this.cargarTodosPedidos();
-
+        } else if (worker.ok === true && worker.usuario.colaborador_role === 'VendedorNormalRole') {
+          this.cargarPedidosVendedor(worker);
+        } else if (worker.ok === true && worker.usuario.colaborador_role === 'ProduccionNormalRole') {
+          this.cargarPedidosProduccion(worker);
+        } else if (worker.ok === true && worker.usuario.colaborador_role === 'DiseniadorRole') {
+          this.cargarPedidosDiseniador(worker);
         }
       });
   }
@@ -161,6 +172,54 @@ export class MiBandejaComponent implements OnInit {
     this.seleccionarBandeja();
     this.cargarSucursales();
     // this.cargarColaboradores();
+  }
+
+  cargarPedidosVendedor(worker: Usuario): void {
+    // console.log(worker);
+
+    const data = {
+      token: worker.token,
+      role: worker.usuario.colaborador_role,
+      idSUcursalWorker: worker.usuario.sucursal._id
+    };
+
+    this.pedidoService.obtenerPedidosPorRole(data)
+      .subscribe((pedidos: Pedido) => {
+        // console.log(pedidos);
+        this.pedidos = pedidos;
+      });
+  }
+
+  cargarPedidosProduccion(worker: Usuario): void {
+    // console.log(worker);
+
+    const data = {
+      token: worker.token,
+      role: worker.usuario.colaborador_role,
+      idSUcursalWorker: worker.usuario.sucursal._id
+    };
+
+    this.pedidoService.obtenerPedidosPorRole(data)
+      .subscribe((pedidos: Pedido) => {
+        // console.log(pedidos);
+        this.pedidos = pedidos;
+      });
+  }
+
+  cargarPedidosDiseniador(worker: Usuario): void {
+    // console.log(worker);
+
+    const data = {
+      token: worker.token,
+      role: worker.usuario.colaborador_role,
+      idSUcursalWorker: worker.usuario.sucursal._id
+    };
+
+    this.pedidoService.obtenerPedidosPorRole(data)
+      .subscribe((pedidos: Pedido) => {
+        // console.log(pedidos);
+        this.pedidos = pedidos;
+      });
   }
 
   aplicarFiltro(usuario: Array<UsuarioWorker>): void {
