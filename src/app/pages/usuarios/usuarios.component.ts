@@ -22,6 +22,7 @@ export class UsuariosComponent implements OnInit, AfterContentChecked {
 
   @ViewChild('fondo', { static: true }) fondo: ElementRef<HTMLElement>;
   @ViewChild('wrapCreaciones', { static: true }) wrapCreaciones: ElementRef<HTMLElement>;
+  // @ViewChild('checksSucursalProduc', { static: false }) checksSucursalProduc: ElementRef<HTMLCollection>;
 
 
   catalogo: CatalogoShared;
@@ -323,6 +324,33 @@ export class UsuariosComponent implements OnInit, AfterContentChecked {
       });
   }
 
+  checkSucursalesProd(): any {
+
+    const checksSucursalProd = document.getElementsByClassName('checkSucursalesProd');
+
+    const arrayFromChecks = Array.from(checksSucursalProd);
+    // let mapCheck = [];
+
+    const mapChecks = arrayFromChecks.map((check: any) => {
+      if (check.value !== this.usuario.usuario.sucursal) {
+
+        const objCcheck = {
+          check: check.checked,
+          id: check.checked && check.value,
+        };
+
+        return objCcheck;
+      }
+    });
+
+    // if (mapChecks !== []) {
+    //   mapCheck = mapChecks.map((check: any) => {
+    //     return check.value;
+    //   });
+    // }
+    return mapChecks;
+  }
+
   guardar(): void {
 
     this.forma.markAllAsTouched();
@@ -330,7 +358,7 @@ export class UsuariosComponent implements OnInit, AfterContentChecked {
     if (this.forma.status === 'VALID') {
 
       // cargar loading
-      this.store.dispatch(loadingActions.cargarLoading());
+      // this.store.dispatch(loadingActions.cargarLoading());
 
       this.store.select('login').pipe(first())
         .subscribe((worker: Usuario) => {
@@ -344,6 +372,8 @@ export class UsuariosComponent implements OnInit, AfterContentChecked {
             castEstado = 'false';
           }
 
+          const checks = this.checkSucursalesProd();
+
           const data: any = {
             nombre: this.forma.controls.nombre.value,
             apellido: this.forma.controls.apellido.value,
@@ -354,7 +384,8 @@ export class UsuariosComponent implements OnInit, AfterContentChecked {
             sucursal: this.forma.controls.sucursal.value,
             password: '12345678',
             estado: castEstado,
-            token: worker.token
+            token: worker.token,
+            permitidas: checks
           };
 
           if (this.objCat.tipo === 'editar') {

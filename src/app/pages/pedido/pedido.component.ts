@@ -255,10 +255,13 @@ export class PedidoComponent implements OnInit {
       const data = {
         id: this.pedido._id,
         sucursal: this.forma.controls.sucursal.value,
-        etapa_pedido: Number(this.forma.controls.etapaPedido.value),
-        prioridad_pedido: Number(this.forma.controls.prioridad.value),
+        // etapa_pedido: Number(this.forma.controls.etapaPedido.value),
+        etapa_pedido: this.forma.controls.etapaPedido.value,
+        // prioridad_pedido: Number(this.forma.controls.prioridad.value),
+        prioridad_pedido: this.forma.controls.prioridad.value,
         asignado_a: this.forma.controls.diseniador.value,
-        estado_pedido: Number(this.forma.controls.estadoPedido.value),
+        // estado_pedido: Number(this.forma.controls.estadoPedido.value),
+        estado_pedido: this.forma.controls.estadoPedido.value,
         fecha_entrega: this.forma.controls.fechaEntrega.value,
         origen_pedido: this.forma.controls.origenVenta.value,
       };
@@ -695,7 +698,7 @@ export class PedidoComponent implements OnInit {
   }
 
   // seguimiento
-  guardarSeguimiento(idProductoPedido: string, idPedido: string, valueSeg: any, valueProd: any): void {
+  guardarSeguimiento(idProductoPedido: string, valueSeg: any, valueProd: any): void {
 
     this.store.dispatch(loadingActions.cargarLoading());
 
@@ -735,6 +738,43 @@ export class PedidoComponent implements OnInit {
       });
 
     // console.log(idProductoPedido, idPedido, valueSeg.value, valueProd.value);
+  }
+
+  detectarSeguimiento(value: Event, idProductoPedido: string, tipo: number): void {
+
+    const val = (value.target as HTMLInputElement).value;
+
+    this.store.select('login').pipe(first())
+      .subscribe(worker => {
+
+        const data = {
+          token: worker.token,
+          id: idProductoPedido,
+          // seguimiento_disenio: valueSeg.value,
+          // seguimiento_produccion: valueProd.value
+        };
+
+        if (tipo === 0) {
+          Object.assign(data, { seguimiento_disenio: val });
+        } else if (tipo === 1) {
+          Object.assign(data, { seguimiento_produccion: val });
+        }
+
+        this.productoPedidoService.editarProductoPedido(data)
+          .subscribe((productoPedido: ProductoPedido) => {
+
+            if (productoPedido.ok === false) {
+
+              Swal.fire(
+                'Mensaje',
+                `${productoPedido.mensaje}`,
+                'error'
+              );
+
+              this.store.dispatch(loadingActions.quitarLoading());
+            }
+          });
+      });
   }
 
   // pagos

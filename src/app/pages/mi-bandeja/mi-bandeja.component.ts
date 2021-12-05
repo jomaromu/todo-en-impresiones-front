@@ -180,7 +180,8 @@ export class MiBandejaComponent implements OnInit {
     const data = {
       token: worker.token,
       role: worker.usuario.colaborador_role,
-      idSUcursalWorker: worker.usuario.sucursal._id
+      idSUcursalWorker: worker.usuario.sucursal._id,
+      idUsuario: worker.usuario._id
     };
 
     this.pedidoService.obtenerPedidosPorRole(data)
@@ -196,7 +197,8 @@ export class MiBandejaComponent implements OnInit {
     const data = {
       token: worker.token,
       role: worker.usuario.colaborador_role,
-      idSUcursalWorker: worker.usuario.sucursal._id
+      idSUcursalWorker: worker.usuario.sucursal._id,
+      idUsuario: worker.usuario._id
     };
 
     this.pedidoService.obtenerPedidosPorRole(data)
@@ -212,7 +214,8 @@ export class MiBandejaComponent implements OnInit {
     const data = {
       token: worker.token,
       role: worker.usuario.colaborador_role,
-      idSUcursalWorker: worker.usuario.sucursal._id
+      idSUcursalWorker: worker.usuario.sucursal._id,
+      idUsuario: worker.usuario._id
     };
 
     this.pedidoService.obtenerPedidosPorRole(data)
@@ -302,4 +305,5 @@ export class MiBandejaComponent implements OnInit {
   recibirPedidos(pedidos: Array<PedidoDB>): void {
     this.pedidos.pedidosDB = pedidos;
   }
+
 }

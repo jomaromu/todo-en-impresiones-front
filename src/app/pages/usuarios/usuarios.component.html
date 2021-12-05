@@ -80,7 +80,27 @@
                         <input class="form-check-input" type="checkbox" formControlName="estado" role="switch"
                             id="estado" style="margin-left: 30px;" checked>
                     </div>
+
+                    <!-- <pre>{{sucursales?.sucursalesDB[0] | json}}</pre> -->
+                    <!-- <pre>{{usuario?.usuario.sucursal | json}}</pre> -->
+                    <!-- <pre>{{usuario?.usuario | json}}</pre> -->
+                    <div class="ctrl-creacion" *ngIf="!crear && usuario?.usuario.colaborador_role === 'ProduccionNormalRole' || usuario?.usuario.colaborador_role === 'ProduccionVIPRole'">
+                        <label>Permitidas:</label>
+                        <div id="selectSucursalChecks">
+
+                            <div class="form-check" *ngFor="let sucursal of sucursales?.sucursalesDB; let i = index">
+                                <input class="form-check-input checkSucursalesProd" type="checkbox"
+                                    [value]="sucursal._id" [disabled]="sucursal._id === usuario?.usuario.sucursal"
+                                    [checked]="sucursal._id === usuario?.usuario.sucursal || usuario?.usuario.permitidas[i - 1]"
+                                    #checksSucursalProduc>
+                                <label>
+                                    {{sucursal.nombre}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
 
                 <div id="wrap-buttons-creacion">
                     <button type="submit">Guardar</button>

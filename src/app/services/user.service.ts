@@ -153,9 +153,6 @@ export class UserService {
       .pipe(map(resp => resp));
   }
 
-
-
-
   // clientes
   obtenerClientes(token: string): Observable<any> {
 

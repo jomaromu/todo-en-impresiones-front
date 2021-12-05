@@ -31,5 +31,6 @@ export interface UsuarioWorker {
     telefono: string;
     identificacion: string;
     sucursal: any;
+    permitidas: Array<string>;
     _id: any;
 }

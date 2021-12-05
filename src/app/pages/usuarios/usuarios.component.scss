@@ -23,3 +23,22 @@
     right: 25px;
     bottom: 50px;
 }
+
+#selectSucursalChecks {
+    // border: 1px solid blue;
+    width: 100%;
+    overflow-x: scroll;
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    .form-check {
+        max-width: 80px;
+
+        &-input {
+            border: 1px solid gray;
+        }
+    }
+}

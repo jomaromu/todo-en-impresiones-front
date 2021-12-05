@@ -29,9 +29,10 @@ export class ModalDataComponent implements OnInit {
   porcentaje: any;
 
   tipoArchivos = [
-    { nombre: 'Normal', tipo: 0, default: 'checked' },
-    { nombre: 'Corregir', tipo: 1, default: '' },
-    { nombre: 'Aprobado', tipo: 2, default: '' }
+    { nombre: 'Referencia', tipo: 0, default: 'checked' },
+    { nombre: 'Aprobado', tipo: 1, default: '' },
+    { nombre: 'Impreso', tipo: 2, default: '' },
+    { nombre: 'Pagos', tipo: 3, default: '' }
   ];
 
   forma: FormGroup;
@@ -120,11 +121,15 @@ export class ModalDataComponent implements OnInit {
       // this.archivo = file[0];
       // this.forma.controls.archivo.setValue(file[0]);
 
-      const arrayMime = file.type.split('/');
-      const mime = arrayMime[arrayMime.length - 1];
+      // const arrayMime = file.type.split('/');
+      // const mime = arrayMime[arrayMime.length - 1];
+
+      const mime = file.type;
+
+      // console.log(file);
 
       // tslint:disable-next-line: max-line-length
-      if (mime !== 'png' && mime !== 'jpeg' && mime !== 'svg' && mime !== 'tif' && mime !== 'tiff' && mime !== 'jpg' && mime !== 'ppt' && mime !== 'pdf') {
+      if (mime !== 'text/plain' && mime !== 'image/png' && mime !== 'image/svg+xml' && mime !== 'image/tiff' && mime !== 'image/jpeg' && mime !== 'application/vnd.ms-powerpoint' && mime !== 'application/vnd.openxmlformats-officedocument.presentationml.presentation' && mime !== 'application/pdf' && mime !== 'application/msword' && mime !== 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' && mime !== 'text/pain' && mime !== 'application/vnd.ms-excel' && mime !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
 
         Swal.fire(
           'Mensaje',

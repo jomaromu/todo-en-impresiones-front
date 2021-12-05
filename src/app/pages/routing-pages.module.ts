@@ -51,7 +51,8 @@ const pagesRoutes: Routes = [
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+  ],
   imports: [
     CommonModule,
     RouterModule.forChild(pagesRoutes)

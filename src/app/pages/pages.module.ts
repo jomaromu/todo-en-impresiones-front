@@ -27,7 +27,7 @@ import { PedidoComponent } from './pedido/pedido.component';
 
 // pipes
 import { EnlacesPipe } from '../pipes/enlaces.pipe';
-
+import { NombreArchivoPipe } from '../pipes/nombre-archivo.pipe';
 
 @NgModule({
   declarations: [
@@ -48,7 +48,8 @@ import { EnlacesPipe } from '../pipes/enlaces.pipe';
     MetodosPagoComponent,
     CategoriasComponent,
     PedidoComponent,
-    EnlacesPipe],
+    EnlacesPipe,
+    NombreArchivoPipe],
   imports: [
     CommonModule,
     RoutingPagesModule,
