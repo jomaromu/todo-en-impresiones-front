@@ -196,7 +196,8 @@
         <div class="tab-pane fade" id="producto" role="tabpanel">
             <div class="wrapper-tap" id="tap-producto">
                 <h6>Información de producto</h6>
-                <form id="wrap-producto" [formGroup]="forma" (ngSubmit)="actualizarProducto()">
+                <!-- (ngSubmit)="actualizarProducto()" -->
+                <form id="wrap-producto" [formGroup]="forma">
                     <div id="detalle-producto">
                         <!-- producto -->
                         <div id="wrap-input-producto" class="inputs-producto">
@@ -279,12 +280,12 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div id="total-compra" *ngIf="objTotal.total !== 0">
+                        <div id="total-compra" *ngIf="objTotal.pedido !== 0">
                             <table class="table" style="max-width: 250px; width: 120px;">
                                 <tbody>
                                     <tr>
                                         <th>Subtotal:</th>
-                                        <th>{{objTotal.subtotal | currency:'USD':'symbol'}}</th>
+                                        <th>{{objTotal.pedido | currency:'USD':'symbol'}}</th>
                                     </tr>
                                     <tr>
                                         <th>ITBMS:</th>
@@ -292,6 +293,14 @@
                                     </tr>
                                     <tr>
                                         <th>Total:</th>
+                                        <th>{{objTotal.subtotal | currency:'USD':'symbol'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Pagos:</th>
+                                        <th>{{objTotal.pagos | currency:'USD':'symbol'}}</th>
+                                    </tr>
+                                    <tr class="text-danger">
+                                        <th>Saldo:</th>
                                         <th>{{objTotal.total | currency:'USD':'symbol'}}</th>
                                     </tr>
                                 </tbody>
@@ -352,6 +361,7 @@
                                     <td *ngIf="archivo.tipo === 0">Referencia</td>
                                     <td *ngIf="archivo.tipo === 1">Aprobado</td>
                                     <td *ngIf="archivo.tipo === 2">Impreso</td>
+                                    <td *ngIf="archivo.tipo === 3">Pagos</td>
                                     <td>
                                         <a [href]="archivo.nombre_archivo | enlaces" target="_blank">Abrir</a>
                                     </td>
@@ -469,8 +479,8 @@
                                     <th>Creador</th>
                                     <th>Monto</th>
                                     <!-- <th>Descripción</th> -->
-                                    <th>Estado</th>
-                                    <th>Fecha</th>
+                                    <th>Modalidad</th>
+                                    <th>Fecha alta</th>
                                     <th>Método</th>
                                     <!-- <th>Saldo</th> -->
                                     <!-- <th>Comprobante</th> -->
@@ -479,45 +489,83 @@
                             </thead>
 
                             <tbody>
-                                <tr>
+                                <tr *ngFor="let pago of pagos">
                                     <!-- <td>algo</td> -->
-                                    <td>algo</td>
-                                    <td>algo</td>
+                                    <td>{{pago?.idCreador.nombre}} {{pago?.idCreador.apellido}}</td>
+                                    <td>{{pago.monto | currency:'USD':symbol}}</td>
                                     <!-- <td>M Pago</td> -->
-                                    <td>algo</td>
-                                    <td>algo</td>
-                                    <td>M. Pago</td>
+                                    <td>
+                                        <span *ngFor="let modalid of modalidad">
+                                            <span *ngIf="modalid.id === pago.modalidad">
+                                                {{modalid.nombre}}
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td>{{pago.fecha}}</td>
+                                    <td> {{pago?.metodo.nombre}} </td>
                                     <!-- <td>algo</td> -->
                                     <!-- <td>algo</td> -->
-                                    <td>algo</td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                [checked]="pago.estado">
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
+                        <div id="total-compra" *ngIf="objTotal.pedido !== 0">
+                            <table class="table" style="max-width: 250px; width: 120px;">
+                                <tbody>
+                                    <tr>
+                                        <th>Subtotal:</th>
+                                        <th>{{objTotal.pedido | currency:'USD':'symbol'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th>ITBMS:</th>
+                                        <th>{{objTotal.itbms | currency:'USD':'symbol'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th>total:</th>
+                                        <th>{{objTotal.subtotal | currency:'USD':'symbol'}}</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Pagos:</th>
+                                        <th>{{objTotal.pagos | currency:'USD':'symbol'}}</th>
+                                    </tr>
+                                    <tr class="text-danger">
+                                        <th>Saldo:</th>
+                                        <th>{{objTotal.total | currency:'USD':'symbol'}}</th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div id="wrap-buttons-acciones">
+            <div id="wrap-buttons-acciones">
 
-                    <!-- botones acciones -->
-                    <!-- <button class="buttons" type="submit">Guardar Cambios</button> -->
-                    <span></span>
+                <!-- botones acciones -->
+                <!-- <button class="buttons" type="submit">Guardar Cambios</button> -->
+                <span></span>
 
-                    <div id="wrap-acciones">
-                        <button class="buttons" type="button" data-bs-toggle="collapse"
-                            href="#collapse-acciones">Imprimir</button>
+                <div id="wrap-acciones">
+                    <button class="buttons" type="button" data-bs-toggle="collapse"
+                        href="#collapse-acciones">Imprimir</button>
 
-                        <div class="collapse multi-collapse" id="collapse-acciones">
-                            <div class="card card-body">
-                                <button>Imprimir factura</button>
-                                <button>Imprimir recibo</button>
-                            </div>
+                    <div class="collapse multi-collapse" id="collapse-acciones">
+                        <div class="card card-body">
+                            <button>Imprimir factura</button>
+                            <button>Imprimir recibo</button>
                         </div>
-
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <app-loading></app-loading>
 <app-modal-data></app-modal-data>

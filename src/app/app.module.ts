@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../environments/environment';
+import { CurrencyPipe } from '@angular/common';
 
 // Modulos externo
 import { PagesModule } from './pages/pages.module';
@@ -41,7 +42,9 @@ const config: SocketIoConfig = { url: environment.url, options: {} };
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
     SocketIoModule.forRoot(config)
   ],
-  providers: [],
+  providers: [
+    CurrencyPipe
+  ],
   bootstrap: [AppComponent],
   exports: []
 })

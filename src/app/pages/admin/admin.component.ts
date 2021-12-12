@@ -18,13 +18,6 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.getWorker();
-  }
-
-  getWorker(): void {
-
-    // this.store.select('worker').subscribe(data => this.worker = data);
-
   }
 
 }

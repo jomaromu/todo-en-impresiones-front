@@ -47,8 +47,48 @@
 
       <div class="group-btn mt-5">
         <button type="submit" id="btnSubir" class="buttons">Subir archivo</button>
-        <button type="button" class="buttons" (click)="cerrarModal()">Cerrar</button>
+        <button type="button" class="buttons" (click)="cerrarModal()">Cancelar</button>
       </div>
     </form>
   </div>
+
+
+  <!-- crear pagos -->
+  <div class="wrapper animate__animated animate__slideInDown animate__faster" id="crear-pago"
+    *ngIf="data.tipo === 'crear-pago'">
+    <h6>Crear pago</h6>
+
+    <form [formGroup]="forma" (ngSubmit)="crearPago()">
+
+      <!-- metodo -->
+      <div class="mb-3">
+        <label for="">Metodo de pago:</label>
+        <select class="form-select" formControlName="metodo">
+          <option *ngFor="let metodo of metodos?.metodosDB" [value]="metodo._id">{{metodo.nombre}}</option>
+        </select>
+      </div>
+
+      <!-- Modalidad -->
+      <div class="mb-3">
+        <label for="">Modalidad:</label>
+        <select class="form-select" formControlName="modalidad">
+          <option *ngFor="let mod of modalidad" [value]="mod.id">{{mod.nombre}}</option>
+        </select>
+      </div>
+
+      <!-- Monto -->
+      <div class="mb-3">
+        <label for="">Monto a pagar:</label>
+        <input type="text" class="form-control" formControlName="monto" placeholder="Monto a pagar"
+          (keyup)="validarMonto($event)" #monto>
+      </div>
+
+      <div class="group-btn mt-5">
+        <button type="submit" id="btnSubir" class="buttons">Crear pago</button>
+        <button type="button" class="buttons" (click)="cerrarModal()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+
 </div>

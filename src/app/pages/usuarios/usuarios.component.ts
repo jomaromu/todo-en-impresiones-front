@@ -175,6 +175,9 @@ export class UsuariosComponent implements OnInit, AfterContentChecked {
 
         }
       });
+
+    // this.checkSucursalesProd();
+
   }
 
   get checkNombre(): boolean {
@@ -286,7 +289,7 @@ export class UsuariosComponent implements OnInit, AfterContentChecked {
 
         this.usuario = data.usuario;
 
-        console.log(this.usuario.usuario.sucursal);
+        // console.log(this.usuario.usuario.sucursal);
 
         this.forma.controls.nombre.setValue(this.usuario.usuario.nombre);
         this.forma.controls.apellido.setValue(this.usuario.usuario.apellido);
@@ -324,32 +327,34 @@ export class UsuariosComponent implements OnInit, AfterContentChecked {
       });
   }
 
-  checkSucursalesProd(): any {
+  // checkSucursalesProd(): any {
 
-    const checksSucursalProd = document.getElementsByClassName('checkSucursalesProd');
+  //   const checksSucursalProd = document.getElementsByClassName('checkSucursalesProd');
 
-    const arrayFromChecks = Array.from(checksSucursalProd);
-    // let mapCheck = [];
+  //   const arrayFromChecks = Array.from(checksSucursalProd);
+  //   // let mapCheck = [];
 
-    const mapChecks = arrayFromChecks.map((check: any) => {
-      if (check.value !== this.usuario.usuario.sucursal) {
+  //   const mapChecks = arrayFromChecks.map((check: any) => {
+  //     if (check.value !== this.usuario.usuario.sucursal) {
 
-        const objCcheck = {
-          check: check.checked,
-          id: check.checked && check.value,
-        };
+  //       const objCcheck = {
+  //         check: check.checked,
+  //         id: check.checked && check.value,
+  //       };
 
-        return objCcheck;
-      }
-    });
+  //       return objCcheck;
+  //     }
+  //   });
 
-    // if (mapChecks !== []) {
-    //   mapCheck = mapChecks.map((check: any) => {
-    //     return check.value;
-    //   });
-    // }
-    return mapChecks;
-  }
+  //   console.log(mapChecks);
+
+  //   // if (mapChecks !== []) {
+  //   //   mapCheck = mapChecks.map((check: any) => {
+  //   //     return check.value;
+  //   //   });
+  //   // }
+  //   return mapChecks;
+  // }
 
   guardar(): void {
 
@@ -372,7 +377,7 @@ export class UsuariosComponent implements OnInit, AfterContentChecked {
             castEstado = 'false';
           }
 
-          const checks = this.checkSucursalesProd();
+          // const checks = this.checkSucursalesProd();
 
           const data: any = {
             nombre: this.forma.controls.nombre.value,
@@ -385,7 +390,7 @@ export class UsuariosComponent implements OnInit, AfterContentChecked {
             password: '12345678',
             estado: castEstado,
             token: worker.token,
-            permitidas: checks
+            // permitidas: checks
           };
 
           if (this.objCat.tipo === 'editar') {

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PedidoService } from '../../services/pedido.service';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers/globarReducers';
-import { first, take } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 import { Pedido, PedidoDB } from '../../interfaces/pedido';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -22,8 +22,12 @@ import { Productospedido, ProductoPedido } from '../../interfaces/producto-pedid
 import { Producto } from 'src/app/interfaces/producto';
 import { ProductoDB } from '../../interfaces/producto';
 import { ArchivosService } from '../../services/archivos.service';
-import { Archivo, ArchivoDB } from '../../interfaces/archivo';
+import { Archivo } from '../../interfaces/archivo';
 import { WebsocketsService } from '../../services/sockets/websockets.service';
+import { ObjTotales } from '../../reducers/totales-pedido/totales.actions';
+import * as totalesAction from '../../reducers/totales-pedido/totales.actions';
+import { PagosService } from '../../services/pagos.service';
+import { Pagos, PagoDB } from '../../interfaces/pagos';
 
 @Component({
   selector: 'app-pedido',
@@ -38,6 +42,7 @@ export class PedidoComponent implements OnInit {
   @ViewChild('inputProducto', { static: true }) inputProducto: ElementRef<HTMLElement>;
 
   pedido: PedidoDB;
+  pedidoCompleto: Pedido;
   forma: FormGroup;
 
   usuarioEtapa: string;
@@ -54,10 +59,12 @@ export class PedidoComponent implements OnInit {
   productosPedidos: Array<Productospedido>;
   productos: Array<ProductoDB>;
   producto: ProductoDB;
-  objTotal = {
-    subtotal: null,
-    itbms: null,
-    total: null
+  objTotal: ObjTotales = {
+    pedido: 0,
+    subtotal: 0,
+    itbms: 0,
+    pagos: 0,
+    total: 0
   };
   loadModal = false;
   archivo: Archivo;
@@ -65,6 +72,13 @@ export class PedidoComponent implements OnInit {
     _id: null,
     nombre: 'Seleccionar'
   };
+
+  pagos: Array<PagoDB>;
+  modalidad = [
+    { id: 0, nombre: 'Abono' },
+    { id: 1, nombre: 'Cancelación' },
+    // { id: 2, nombre: 'Delivery' },
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -79,16 +93,20 @@ export class PedidoComponent implements OnInit {
     private http: HttpClient,
     private cdref: ChangeDetectorRef,
     private archivoService: ArchivosService,
-    private wsService: WebsocketsService
+    private wsService: WebsocketsService,
+    private pagoService: PagosService
   ) {
     // this.cdref.detectChanges();
   }
 
   ngOnInit(): void {
-    this.obtenerPedido();
-    this.cargarFormulario();
-    this.cargarArchivos();
+
     this.escucharSocketsArchivos();
+    this.obtenerPagosSocket();
+    this.cargarFormulario();
+    this.obtenerPedido();
+    this.cargarArchivos();
+    // this.obtenerPagos();
     // this.cargarProductos();
     // this.cagarUsuarioEtapa();
   }
@@ -133,8 +151,10 @@ export class PedidoComponent implements OnInit {
           .subscribe((pedido: Pedido) => {
             // console.log(pedido);
             this.pedido = pedido.pedidoDB;
+            this.pedidoCompleto = pedido;
             this.cargarSelects();
             this.cargarProductosPedidos(pedido.pedidoDB);
+            this.obtenerPagosPorPedido(pedido.pedidoDB._id);
 
             const checkItbms: any = this.checkItbms.nativeElement;
             checkItbms.checked = pedido.pedidoDB.itbms;
@@ -246,6 +266,8 @@ export class PedidoComponent implements OnInit {
 
   actualizarInfo(): void {
 
+    // console.log(this.forma.controls.etapaPedido.value);
+
     this.store.dispatch(loadingActions.cargarLoading());
 
     if (this.forma.status === 'VALID') {
@@ -255,18 +277,19 @@ export class PedidoComponent implements OnInit {
       const data = {
         id: this.pedido._id,
         sucursal: this.forma.controls.sucursal.value,
-        // etapa_pedido: Number(this.forma.controls.etapaPedido.value),
-        etapa_pedido: this.forma.controls.etapaPedido.value,
+        etapa_pedido: parseInt(this.forma.controls.etapaPedido.value, 10),
+        // etapa_pedido: this.forma.controls.etapaPedido.value,
         // prioridad_pedido: Number(this.forma.controls.prioridad.value),
         prioridad_pedido: this.forma.controls.prioridad.value,
-        asignado_a: this.forma.controls.diseniador.value,
+        // tslint:disable-next-line: max-line-length
+        asignado_a: this.forma.controls.diseniador.value === 'null' || !this.forma.controls.diseniador.value ? this.forma.controls.diseniador.setValue(null) : this.forma.controls.diseniador.value,
         // estado_pedido: Number(this.forma.controls.estadoPedido.value),
         estado_pedido: this.forma.controls.estadoPedido.value,
         fecha_entrega: this.forma.controls.fechaEntrega.value,
         origen_pedido: this.forma.controls.origenVenta.value,
       };
 
-      if (data.etapa_pedido === 1 && (data.asignado_a === null || data.asignado_a === 'null')) {
+      if (data.etapa_pedido === 1 && !data.asignado_a) {
 
         Swal.fire(
           'Mensaje',
@@ -275,18 +298,19 @@ export class PedidoComponent implements OnInit {
         );
 
         this.store.dispatch(loadingActions.quitarLoading());
+      }
+      //  else if (data.etapa_pedido !== 1 && (data.asignado_a === null || data.asignado_a === 'null')) {
+      //   Swal.fire(
+      //     'Mensaje',
+      //     `Seleccione un diseñador`,
+      //     'error'
+      //   );
 
-      } else if (data.etapa_pedido !== 1 && (data.asignado_a === null || data.asignado_a === 'null')) {
+      //   this.store.dispatch(loadingActions.quitarLoading());
 
-        Swal.fire(
-          'Mensaje',
-          `Seleccione un diseñador`,
-          'error'
-        );
-
-        this.store.dispatch(loadingActions.quitarLoading());
-
-      } else {
+      // }
+      else {
+        // return;
 
         this.store.select('login').pipe(first())
           .subscribe(worker => {
@@ -407,10 +431,12 @@ export class PedidoComponent implements OnInit {
           cantidad: this.forma.controls.cantidad.value,
           precio: this.forma.controls.precio.value,
           comentario: this.forma.controls.comentario.value,
+          // subtotalPedido: this.objTotal.subtotal,
+          // totalPedido: this.objTotal.total
           // itbms: pedido.itbms
         };
 
-        this.productoPedidoService.crearProductoPedido(data)
+        this.productoPedidoService.crearProductoPedido(data).pipe(first())
           .subscribe((pedidoDB: Pedido) => {
 
             if (pedidoDB.ok === false) {
@@ -427,7 +453,6 @@ export class PedidoComponent implements OnInit {
 
       });
 
-
   }
 
   agregarProducto(producto: ProductoDB): void {
@@ -438,6 +463,7 @@ export class PedidoComponent implements OnInit {
     this.forma.controls.precio.setValue(producto.precio);
 
     this.producto = producto;
+
   }
 
   cargarProductosPedidos(pedido: PedidoDB): void {
@@ -456,7 +482,7 @@ export class PedidoComponent implements OnInit {
           .subscribe((pedidoDB: Pedido) => {
             this.productosPedidos = pedidoDB.pedidoDB.productos_pedidos;
             // console.log(pedido);
-            this.costoDelPedido(this.productosPedidos, pedido.itbms);
+            this.costoDelPedido(pedidoDB);
 
             if (this.productosPedidos.length === 0) {
               this.forma.controls.itbms.disable();
@@ -467,62 +493,85 @@ export class PedidoComponent implements OnInit {
       });
   }
 
-  costoDelPedido(productoPedido: Array<Productospedido>, itbms: boolean): void {
+  costoDelPedido(pedido: Pedido): void {
+
+    const productoPedido: Array<any> = pedido?.pedidoDB?.productos_pedidos;
+    const itbms = pedido?.pedidoDB?.itbms;
 
     if (productoPedido.length === 0) {
-      this.objTotal.subtotal = 0;
+      this.objTotal.pedido = 0;
       this.objTotal.itbms = 0;
+      this.objTotal.subtotal = 0;
+      this.objTotal.pagos = 0;
       this.objTotal.total = 0;
-      return;
-    }
 
-    // console.log(itbms);
+    } else {
 
 
-    // console.log(productoPedido, itbms);
-    // return;
-    if (itbms === false || !itbms) {
-
-      const mapSubtotal = productoPedido.map(productoPed => {
+      const mapTotalPedido = productoPedido.map(productoPed => {
         return productoPed.total;
       });
 
-      const subtotal = mapSubtotal.reduce((acc, current) => {
+      const totalPedido = mapTotalPedido.reduce((acc, current) => {
         return acc + current;
+      }, 0);
+
+      const mapPagos = pedido.pedidoDB.pagos_pedido.map(pago => {
+        return pago.monto;
       });
 
-      // itbms
-      const itmbs = (subtotal * 0);
+      const totalPagos: number = mapPagos.reduce((acc, current) => {
+        return acc + current;
+      }, 0);
 
-      // total
-      const total = subtotal + itmbs;
+      // console.log(totalPagos);
 
-      this.objTotal.subtotal = subtotal.toFixed(2);
-      this.objTotal.itbms = itmbs.toFixed(2);
-      this.objTotal.total = (subtotal + itmbs).toFixed(2);
+      let itbm = 0;
+
+      if (itbms === false || !itbms) {
+
+        const subtotal = (totalPedido + itbm);
+        const total = (subtotal - totalPagos);
+
+        this.objTotal.pedido = totalPedido;
+        this.objTotal.itbms = itbm;
+        this.objTotal.subtotal = subtotal;
+        this.objTotal.pagos = totalPagos;
+        this.objTotal.total = total;
+
+      }
+
+      if (itbms === true) {
+
+        itbm = totalPedido * 0.07;
+        const subtotal = (totalPedido + itbm);
+        const total = (subtotal - totalPagos);
+
+        this.objTotal.pedido = totalPedido;
+        this.objTotal.itbms = itbm;
+        this.objTotal.subtotal = subtotal;
+        this.objTotal.pagos = totalPagos;
+        this.objTotal.total = total;
+      }
 
     }
 
-    if (itbms === true) {
+    // tslint:disable-next-line: max-line-length
+    this.store.dispatch(totalesAction.obtenerTotalesPedido({ pedido: this.objTotal.pedido, subtotal: this.objTotal.subtotal, itbms: this.objTotal.itbms, pagos: this.objTotal.pagos, total: this.objTotal.total }));
 
-      const mapSubtotal = productoPedido.map(productoPed => {
-        return productoPed.total;
+    this.store.select('login').pipe(first())
+      .subscribe(worker => {
+
+        // Actualizar pedido
+        const data = {
+          subtotal: this.objTotal.subtotal,
+          total: this.objTotal.total,
+          id: this.pedido._id
+        };
+
+        this.pedidoService.editarPedido(data, worker.token).subscribe();
+
       });
-
-      const subtotal = mapSubtotal.reduce((acc, current) => {
-        return acc + current;
-      });
-
-      // itbms
-      const itmbs = (subtotal * 0.07);
-
-      // total
-      const total = subtotal + itmbs;
-
-      this.objTotal.subtotal = subtotal.toFixed(2);
-      this.objTotal.itbms = itmbs.toFixed(2);
-      this.objTotal.total = (subtotal + itmbs).toFixed(2);
-    }
   }
 
   detectarItbms(e: any, pedido: PedidoDB): void {
@@ -536,20 +585,19 @@ export class PedidoComponent implements OnInit {
     this.store.select('login').pipe(first())
       .subscribe(worker => {
         this.pedidoService.editarPedido(data, worker.token)
-          .subscribe((pedidoDB: Pedido) => {
-            this.costoDelPedido(pedidoDB.pedidoDB.productos_pedidos, pedidoDB.pedidoDB.itbms);
+          .subscribe((pedido1: Pedido) => {
+            this.costoDelPedido(pedido1);
           });
       });
   }
 
-  actualizarProducto(): void {
-    console.log(this.forma);
-  }
+  // actualizarProducto(): void {
+  //   // console.log(this.forma);
+  // }
 
   eliminarProductoPedido(productoPedido: Productospedido, pedido: PedidoDB): void {
 
     this.store.dispatch(loadingActions.cargarLoading());
-
 
     this.store.select('login').pipe(first())
       .subscribe(worker => {
@@ -610,7 +658,6 @@ export class PedidoComponent implements OnInit {
       });
 
   }
-
 
   // Archivo
   addArchivo(): void {
@@ -693,6 +740,7 @@ export class PedidoComponent implements OnInit {
 
     this.wsService.escuchar('recibir-archivos')
       .subscribe((data: any) => {
+        console.log(data);
         this.cargarArchivos();
       });
   }
@@ -779,6 +827,28 @@ export class PedidoComponent implements OnInit {
 
   // pagos
   addPago(): void {
-    console.log('add pago');
+    this.store.dispatch(modalActions.cargarModal({ tipo: 'crear-pago', estado: true, data: this.pedido._id }));
   }
+
+  obtenerPagosPorPedido(idPedido: string): void {
+    this.store.select('login').pipe(first())
+      .subscribe(worker => {
+
+        this.pagoService.obtenerPagosPorPedido(worker.token, idPedido)
+          .subscribe((pedido: Pedido) => {
+
+            this.pagos = pedido.pedidoDB.pagos_pedido;
+            console.log(this.pagos);
+          });
+      });
+  }
+
+  obtenerPagosSocket(): void {
+    this.wsService.escuchar('recibir-pagos')
+      .subscribe((pedido: Pedido) => {
+        this.costoDelPedido(pedido);
+        this.obtenerPagosPorPedido(pedido.pedidoDB._id);
+      });
+  }
+
 }

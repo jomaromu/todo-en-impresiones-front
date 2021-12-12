@@ -11,7 +11,6 @@ export class DashboardGuard implements CanActivate {
 
   private auth: boolean;
 
-
   constructor(
     private router: Router,
     private store: Store<AppState>
@@ -21,7 +20,7 @@ export class DashboardGuard implements CanActivate {
 
     const token = localStorage.getItem('token');
 
-
+    // console.log('ok');
     this.store.select('login').pipe(first())
       .subscribe(usuario => {
 
@@ -35,5 +34,6 @@ export class DashboardGuard implements CanActivate {
 
     return this.auth;
   }
+
 
 }

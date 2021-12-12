@@ -9,6 +9,9 @@ import { UserService } from '../../services/user.service';
 import { UsuarioWorker, Usuario } from '../../interfaces/resp-worker';
 import { PedidoService } from '../../services/pedido.service';
 import { Pedido, PedidoDB } from '../../interfaces/pedido';
+import { Productospedido } from '../../interfaces/producto-pedido';
+import { ObjTotales, obtenerTotalesPedido } from '../../reducers/totales-pedido/totales.actions';
+import * as totalesAction from '../../reducers/totales-pedido/totales.actions';
 
 @Component({
   selector: 'app-mi-bandeja',
@@ -28,6 +31,14 @@ export class MiBandejaComponent implements OnInit {
   worker: Usuario;
 
   userFake = { id: 'null', nombre: 'Todas' };
+
+  objTotal: ObjTotales = {
+    pedido: 0,
+    subtotal: 0,
+    itbms: 0,
+    pagos: 0,
+    total: 0
+  };
 
   constructor(
     private fb: FormBuilder,

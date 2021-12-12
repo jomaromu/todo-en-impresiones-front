@@ -32,8 +32,8 @@
                     <td>{{pedido.Cliente[0]?.nombre}}</td>
                     <td>{{pedido.Cliente[0]?.telefono}}</td>
                     <td>{{pedido.Sucursal[0]?.nombre}}</td>
-                    <td>{{pedido.total}}</td>
-                    <td>{{pedido.saldo}}</td>
+                    <td>{{pedido.subtotal | currency: 'USD':'symbol'}}</td>
+                    <td>{{pedido.total | currency: 'USD':'symbol'}}</td>
                     <td>
                         <span *ngFor="let prioridad of prioridades">
                             <span *ngIf="pedido.prioridad_pedido === prioridad.importancia">

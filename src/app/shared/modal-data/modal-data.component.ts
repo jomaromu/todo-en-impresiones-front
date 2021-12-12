@@ -1,14 +1,22 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { HttpEventType } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/reducers/globarReducers';
 import * as modalActions from '../../reducers/modal/modal.actions';
-import { ModalReducerInterface } from '../../reducers/modal/modal.reducer';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ArchivosService } from '../../services/archivos.service';
 import { first } from 'rxjs/operators';
-import Swal from 'sweetalert2';
-import { HttpEventType } from '@angular/common/http';
+import { ArchivosService } from '../../services/archivos.service';
 import { WebsocketsService } from '../../services/sockets/websockets.service';
+import { MetodoPagoService } from '../../services/metodo-pago.service';
+import { MetodoPago } from 'src/app/interfaces/metodo-pago';
+import { ModalReducerInterface } from '../../reducers/modal/modal.reducer';
+import Swal from 'sweetalert2';
+import validator from 'validator';
+import { PagosService } from '../../services/pagos.service';
+import * as loadingAction from '../../reducers/loading/loading.actions';
+import { Pagos } from '../../interfaces/pagos';
+import { CurrencyPipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-modal-data',
@@ -18,6 +26,7 @@ import { WebsocketsService } from '../../services/sockets/websockets.service';
 export class ModalDataComponent implements OnInit {
 
   @ViewChild('modal', { static: true }) modal: ElementRef<HTMLElement>;
+  @ViewChild('monto', { static: false }) monto: ElementRef<HTMLInputElement>;
 
   data: ModalReducerInterface = {
     data: null,
@@ -35,6 +44,15 @@ export class ModalDataComponent implements OnInit {
     { nombre: 'Pagos', tipo: 3, default: '' }
   ];
 
+  modalidad = [
+    { id: 0, nombre: 'Abono' },
+    { id: 1, nombre: 'Cancelación' },
+    // { id: 2, nombre: 'Delivery' },
+  ];
+
+  metodos: MetodoPago;
+  temp = '';
+
   forma: FormGroup;
 
 
@@ -43,7 +61,11 @@ export class ModalDataComponent implements OnInit {
     private fb: FormBuilder,
     private cdref: ChangeDetectorRef,
     private archivoService: ArchivosService,
-    private wsService: WebsocketsService
+    private wsService: WebsocketsService,
+    private metodoPagoService: MetodoPagoService,
+    private pagoService: PagosService,
+    private wbServices: WebsocketsService,
+    private currentPipe: CurrencyPipe
   ) { }
 
   ngOnInit(): void {
@@ -78,6 +100,10 @@ export class ModalDataComponent implements OnInit {
           case 'ver-diseniadores':
             this.data = resp;
             break;
+          case 'crear-pago':
+            this.data = resp;
+            this.cargarMetodos();
+            break;
           // default: this.data.tipo = '';
         }
       });
@@ -98,8 +124,11 @@ export class ModalDataComponent implements OnInit {
 
     this.forma = this.fb.group({
       archivo: [null, [Validators.required]],
-      nombre: [null,],
-      tipo: [0, [Validators.required]]
+      nombre: [null],
+      tipo: [0, [Validators.required]],
+      metodo: [null],  // REVISAR VALIDACIONES CON ARCHIVO
+      modalidad: [1], // REVISAR VALIDACIONES CON ARCHIVO
+      monto: [0], // REVISAR VALIDACIONES CON ARCHIVO
     });
   }
 
@@ -237,6 +266,110 @@ export class ModalDataComponent implements OnInit {
       setTimeout(() => {
         modal.style.display = 'none';
       }, 300);
+    }
+  }
+
+  // Pagos
+  crearPago(): void {
+
+    this.store.dispatch(loadingAction.cargarLoading());
+
+    this.store.select('login').pipe(first())
+      .subscribe(worker => {
+
+        const data = {
+          pedido: this.data.data,
+          metodo: this.forma.controls.metodo.value,
+          modalidad: Number(this.forma.controls.modalidad.value),
+          monto: Number(this.forma.controls.monto.value),
+          token: worker.token
+        };
+
+
+        Swal.fire({
+          title: 'Mensaje',
+          text: '¿Desea agregar un pago?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Agregar pago',
+          cancelButtonAriaLabel: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+
+            this.pagoService.crearPago(data).pipe(first())
+              .subscribe((pago: Pagos) => {
+
+                if (pago.ok === false) {
+
+                  this.store.dispatch(loadingAction.quitarLoading());
+
+                  Swal.fire(
+                    'Mensaje',
+                    `Error al crear el pago`,
+                    'error'
+                  );
+
+                } else {
+
+                  this.store.dispatch(modalActions.quitarModal());
+                  this.store.dispatch(loadingAction.quitarLoading());
+                  this.forma.controls.monto.reset();
+
+                  Swal.fire(
+                    'Mensaje',
+                    'Pago creado',
+                    'success'
+                  );
+
+                  this.wsService.emitir('cargar-pagos');
+
+                }
+
+              });
+
+          } else {
+
+            this.store.dispatch(loadingAction.quitarLoading());
+
+          }
+        });
+      });
+  }
+
+  cargarMetodos(): void {
+    this.store.pipe(first()).subscribe(
+      reduxTotales => {
+        this.metodoPagoService.obtenerMetodos(reduxTotales.login.token).subscribe((metodos: MetodoPago) => {
+          // console.log(metodos?.metodosDB[0]._id);
+          this.metodos = metodos;
+          this.forma.controls.metodo.setValue(metodos.metodosDB[0]._id);
+          // console.log(reduxTotales.totales);
+          this.forma.controls.monto.setValue(this.currentPipe.transform(reduxTotales.totales.total, '', '', '', '' ));
+        });
+      }
+    );
+  }
+
+  validarMonto(e: Event): void {
+
+    const monto = this.monto.nativeElement;
+    const valor = (e.target as HTMLInputElement).value;
+
+    const checkNum = validator.isFloat(valor, { min: 0.00 });
+
+    if (valor === '') {
+      this.temp = '';
+    }
+
+    if (checkNum) {
+
+      monto.value = valor;
+      this.temp = valor;
+
+    } else {
+      monto.value = this.temp;
     }
   }
 }

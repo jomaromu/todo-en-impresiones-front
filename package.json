@@ -34,6 +34,7 @@
     "socket.io-client": "^4.4.0",
     "sweetalert2": "^11.1.9",
     "tslib": "^2.0.0",
+    "validator": "^13.7.0",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
@@ -45,6 +46,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/moment-business": "^0.1.4",
     "@types/node": "^12.11.1",
+    "@types/validator": "^13.7.0",
     "codelyzer": "^6.0.0",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",

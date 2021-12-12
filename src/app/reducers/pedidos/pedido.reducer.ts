@@ -1,5 +1,5 @@
 import { Action, createReducer, on } from '@ngrx/store';
-import { Pedido } from 'src/app/interfaces/pedido';
+import { Pedido } from '../../interfaces/pedido';
 import * as pedidoActions from './pedido.actions';
 
 const estadoInicial: Pedido = {
