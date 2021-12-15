@@ -31,4 +31,13 @@ export class PagosService {
       .pipe(map(resp => resp));
   }
 
+  desactivarPago(data: any): Observable<any> {
+
+    const url = `${environment.url}/pago/desactivarPago`;
+    const header = new HttpHeaders({ token: data.token, pedido: data.idPedido, idPago: data.idPago });
+
+    return this.http.put(url, data, { headers: header })
+      .pipe(map(resp => resp));
+  }
+
 }

@@ -508,7 +508,7 @@
                                     <td>
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" role="switch"
-                                                [checked]="pago.estado">
+                                                [checked]="pago.estado" (change)="checkEstadoPago($event, pago._id)">
                                         </div>
                                     </td>
                                 </tr>

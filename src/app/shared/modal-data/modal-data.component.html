@@ -8,12 +8,11 @@
     </div>
   </div>
 
-
   <!-- subir archivos -->
   <div class="wrapper animate__animated animate__slideInDown animate__faster" id="subir-archivo"
     *ngIf="data.tipo === 'subir-archivos'" #wrapper>
 
-    <form [formGroup]="forma" (ngSubmit)="subirArchivos()">
+    <form [formGroup]="formaArchivo" (ngSubmit)="subirArchivos()">
       <h6>Subir archivos</h6>
 
       <!-- archivo -->
@@ -52,18 +51,17 @@
     </form>
   </div>
 
-
   <!-- crear pagos -->
   <div class="wrapper animate__animated animate__slideInDown animate__faster" id="crear-pago"
     *ngIf="data.tipo === 'crear-pago'">
     <h6>Crear pago</h6>
 
-    <form [formGroup]="forma" (ngSubmit)="crearPago()">
+    <form [formGroup]="formaPagos" (ngSubmit)="crearPago()">
 
       <!-- metodo -->
       <div class="mb-3">
         <label for="">Metodo de pago:</label>
-        <select class="form-select" formControlName="metodo">
+        <select class="form-select" formControlName="metodo" [ngClass]="{'borde-rojo': checkMetodo}">
           <option *ngFor="let metodo of metodos?.metodosDB" [value]="metodo._id">{{metodo.nombre}}</option>
         </select>
       </div>
@@ -71,7 +69,7 @@
       <!-- Modalidad -->
       <div class="mb-3">
         <label for="">Modalidad:</label>
-        <select class="form-select" formControlName="modalidad">
+        <select class="form-select" formControlName="modalidad" [ngClass]="{'borde-rojo': checkModalidad}">
           <option *ngFor="let mod of modalidad" [value]="mod.id">{{mod.nombre}}</option>
         </select>
       </div>
@@ -80,7 +78,7 @@
       <div class="mb-3">
         <label for="">Monto a pagar:</label>
         <input type="text" class="form-control" formControlName="monto" placeholder="Monto a pagar"
-          (keyup)="validarMonto($event)" #monto>
+          [ngClass]="{'borde-rojo': checkMonto}" (keyup)="validarMonto($event)" #monto>
       </div>
 
       <div class="group-btn mt-5">
@@ -90,5 +88,25 @@
     </form>
   </div>
 
+  <!-- motivo desactivar pago -->
+  <div class="wrapper animate__animated animate__slideInDown animate__faster" id="estado-pago"
+    *ngIf="data.tipo === 'estado-pago'">
+    <h6>Desactivar pago</h6>
+
+    <form [formGroup]="formaDesactivarPago" (ngSubmit)="desactivarPago()">
+
+      <div class="mb-3">
+        <label for="motivo" class="form-label">Motivo:</label>
+        <textarea class="form-control" formControlName="motivo" id="motivo" rows="3"
+          [ngClass]="{'borde-rojo': checkMotivo}"></textarea>
+          <label class="text-danger fs-6" *ngIf="checkMotivo">Mínimo 4 carácteres</label>
+      </div>
+
+      <div class="group-btn mt-5">
+        <button type="submit" id="btnSubir" class="buttons">Desactivar pago</button>
+        <button type="button" class="buttons" (click)="cerrarModal()">Cancelar</button>
+      </div>
+    </form>
+  </div>
 
 </div>

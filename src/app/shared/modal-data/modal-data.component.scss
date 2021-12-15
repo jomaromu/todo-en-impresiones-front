@@ -76,6 +76,8 @@ h6 {
     }
 }
 
+
+// pagos
 #crear-pago {
 
     label {
@@ -84,6 +86,42 @@ h6 {
         margin-bottom: 5px;
     }
 
+
+    .group-btn {
+
+        // border: 1px solid blue;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+
+        .buttons {
+            height: 35px;
+            width: 150px;
+            box-shadow: none !important;
+            border: 1px solid darken($color: $gray, $amount: 10) !important;
+            transition: 0.3s all ease-in-out;
+            font-weight: 200;
+        }
+
+        .buttons:hover {
+            box-shadow: $box-shadow !important;
+        }
+
+        button:first-child {
+            @include button('', $white, $primary);
+        }
+
+        button:last-child {
+            @include button('', $primary, $white);
+            margin-left: 25px;
+        }
+    }
+}
+
+#estado-pago {
+    textarea {
+        resize: none;
+    }
 
     .group-btn {
 

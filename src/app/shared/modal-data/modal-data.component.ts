@@ -28,7 +28,7 @@ export class ModalDataComponent implements OnInit {
   @ViewChild('modal', { static: true }) modal: ElementRef<HTMLElement>;
   @ViewChild('monto', { static: false }) monto: ElementRef<HTMLInputElement>;
 
-  data: ModalReducerInterface = {
+  data: any = {
     data: null,
     tipo: '',
     estado: null,
@@ -53,7 +53,10 @@ export class ModalDataComponent implements OnInit {
   metodos: MetodoPago;
   temp = '';
 
-  forma: FormGroup;
+  // forma: FormGroup;
+  formaArchivo: FormGroup;
+  formaPagos: FormGroup;
+  formaDesactivarPago: FormGroup;
 
 
   constructor(
@@ -71,7 +74,10 @@ export class ModalDataComponent implements OnInit {
   ngOnInit(): void {
 
     this.cargarDataModal();
-    this.cargarFormulario();
+    this.cargarFormularioArchivo();
+    this.cargarFormularioPagos();
+    this.cargarFormularioDesacPagos();
+    // this.cargarFormulario();
   }
 
   cargarModal(): void {
@@ -95,7 +101,7 @@ export class ModalDataComponent implements OnInit {
         switch (resp.tipo) {
           case 'subir-archivos':
             this.data = resp;
-            this.forma.controls.tipo.setValue(0);
+            this.formaArchivo.controls.tipo.setValue(0);
             break;
           case 'ver-diseniadores':
             this.data = resp;
@@ -104,6 +110,8 @@ export class ModalDataComponent implements OnInit {
             this.data = resp;
             this.cargarMetodos();
             break;
+          case 'estado-pago':
+            this.data = resp;
           // default: this.data.tipo = '';
         }
       });
@@ -115,20 +123,35 @@ export class ModalDataComponent implements OnInit {
 
     this.store.dispatch(modalActions.quitarModal());
 
-    this.forma.controls.archivo.setValue(null);
-    this.forma.controls.archivo.markAsUntouched();
-    this.forma.controls.nombre.setValue(null);
+    this.formaArchivo.controls.archivo.setValue(null);
+    this.formaArchivo.controls.archivo.markAsUntouched();
+    this.formaArchivo.controls.nombre.setValue(null);
+
+    this.formaDesactivarPago.controls.motivo.reset();
   }
 
-  cargarFormulario(): void {
+  cargarFormularioArchivo(): void {
 
-    this.forma = this.fb.group({
-      archivo: [null, [Validators.required]],
+    this.formaArchivo = this.fb.group({
       nombre: [null],
+      archivo: [null, [Validators.required]],
       tipo: [0, [Validators.required]],
-      metodo: [null],  // REVISAR VALIDACIONES CON ARCHIVO
-      modalidad: [1], // REVISAR VALIDACIONES CON ARCHIVO
-      monto: [0], // REVISAR VALIDACIONES CON ARCHIVO
+    });
+  }
+
+  cargarFormularioPagos(): void {
+
+    this.formaPagos = this.fb.group({
+      metodo: [null, [Validators.required]],
+      modalidad: [1, [Validators.required]],
+      monto: [0, [Validators.required]],
+    });
+  }
+
+  cargarFormularioDesacPagos(): void {
+
+    this.formaDesactivarPago = this.fb.group({
+      motivo: [null, [Validators.required, Validators.minLength(4)]], // REVISAR VALIDACIONES CON ARCHIVO
     });
   }
 
@@ -136,7 +159,7 @@ export class ModalDataComponent implements OnInit {
 
   get checkArchivo(): boolean {
 
-    if (this.forma.controls.archivo.touched && this.forma.controls.archivo.status === 'INVALID') {
+    if (this.formaArchivo.controls.archivo.touched && this.formaArchivo.controls.archivo.status === 'INVALID') {
       return true;
     }
 
@@ -166,7 +189,7 @@ export class ModalDataComponent implements OnInit {
           'error'
         );
 
-        this.forma.controls.archivo.setValue(null);
+        this.formaArchivo.controls.archivo.setValue(null);
       } else {
 
         this.archivo = file;
@@ -176,8 +199,8 @@ export class ModalDataComponent implements OnInit {
 
   subirArchivos(): void {
 
-    if (this.forma.status === 'INVALID') {
-      this.forma.markAllAsTouched();
+    if (this.formaArchivo.status === 'INVALID') {
+      this.formaArchivo.markAllAsTouched();
       return;
     }
 
@@ -187,8 +210,8 @@ export class ModalDataComponent implements OnInit {
         const fd = new FormData();
 
         fd.append('archivo', this.archivo);
-        fd.append('nombre', this.forma.controls.nombre.value);
-        fd.append('tipo', this.forma.controls.tipo.value);
+        fd.append('nombre', this.formaArchivo.controls.nombre.value);
+        fd.append('tipo', this.formaArchivo.controls.tipo.value);
 
         this.archivoService.subirArchivo(fd, worker.token, this.data.data)
           .subscribe(event => {
@@ -236,10 +259,10 @@ export class ModalDataComponent implements OnInit {
 
               divProgres.style.display = 'none';
               progress.style.width = `0%`;
-              this.forma.controls.archivo.setValue(null);
-              this.forma.controls.archivo.markAsUntouched();
-              this.forma.controls.nombre.setValue(null);
-              this.forma.controls.tipo.setValue(0);
+              this.formaArchivo.controls.archivo.setValue(null);
+              this.formaArchivo.controls.archivo.markAsUntouched();
+              this.formaArchivo.controls.nombre.setValue(null);
+              this.formaArchivo.controls.tipo.setValue(0);
 
               this.store.dispatch(modalActions.quitarModal());
             }
@@ -270,7 +293,47 @@ export class ModalDataComponent implements OnInit {
   }
 
   // Pagos
+
+  get checkMetodo(): boolean {
+
+    if (this.formaPagos.controls.metodo.touched && this.formaPagos.controls.metodo.status === 'INVALID') {
+      return true;
+    }
+
+  }
+
+  get checkModalidad(): boolean {
+
+    if (this.formaPagos.controls.modalidad.touched && this.formaPagos.controls.modalidad.status === 'INVALID') {
+      return true;
+    }
+
+  }
+
+  get checkMonto(): boolean {
+
+    if (this.formaPagos.controls.monto.touched && this.formaPagos.controls.monto.status === 'INVALID') {
+      return true;
+    }
+
+  }
+
+  get checkMotivo(): boolean {
+
+    if (this.formaDesactivarPago.controls.motivo.touched && this.formaDesactivarPago.controls.motivo.status === 'INVALID') {
+      return true;
+    }
+
+  }
+
   crearPago(): void {
+
+    // console.log(this.formaPagos);
+
+    if (this.formaPagos.status === 'INVALID') {
+      this.formaPagos.markAllAsTouched();
+      return;
+    }
 
     this.store.dispatch(loadingAction.cargarLoading());
 
@@ -279,9 +342,9 @@ export class ModalDataComponent implements OnInit {
 
         const data = {
           pedido: this.data.data,
-          metodo: this.forma.controls.metodo.value,
-          modalidad: Number(this.forma.controls.modalidad.value),
-          monto: Number(this.forma.controls.monto.value),
+          metodo: this.formaPagos.controls.metodo.value,
+          modalidad: Number(this.formaPagos.controls.modalidad.value),
+          monto: Number(this.formaPagos.controls.monto.value),
           token: worker.token
         };
 
@@ -315,7 +378,7 @@ export class ModalDataComponent implements OnInit {
 
                   this.store.dispatch(modalActions.quitarModal());
                   this.store.dispatch(loadingAction.quitarLoading());
-                  this.forma.controls.monto.reset();
+                  this.formaPagos.controls.monto.reset();
 
                   Swal.fire(
                     'Mensaje',
@@ -344,9 +407,9 @@ export class ModalDataComponent implements OnInit {
         this.metodoPagoService.obtenerMetodos(reduxTotales.login.token).subscribe((metodos: MetodoPago) => {
           // console.log(metodos?.metodosDB[0]._id);
           this.metodos = metodos;
-          this.forma.controls.metodo.setValue(metodos.metodosDB[0]._id);
+          this.formaPagos.controls.metodo.setValue(metodos.metodosDB[0]._id);
           // console.log(reduxTotales.totales);
-          this.forma.controls.monto.setValue(this.currentPipe.transform(reduxTotales.totales.total, '', '', '', '' ));
+          this.formaPagos.controls.monto.setValue(this.currentPipe.transform(reduxTotales.totales.total, '', '', '', ''));
         });
       }
     );
@@ -370,6 +433,40 @@ export class ModalDataComponent implements OnInit {
 
     } else {
       monto.value = this.temp;
+    }
+  }
+
+  desactivarPago(): void {
+
+    if (this.formaDesactivarPago.status === 'INVALID') {
+      this.formaDesactivarPago.markAllAsTouched();
+      return;
+    }
+
+    if (!this.data.data.evento) {
+
+      this.store.select('login').pipe(first())
+        .subscribe(worker => {
+
+          const desacPago = this.data.data.evento;
+          const idPedido = this.data.data.pedido;
+          const motivo = this.formaDesactivarPago.controls.motivo.value;
+          const idPago = this.data.data.pago;
+
+          const data = {
+            motivo,
+            desacPago,
+            idPedido,
+            idPago,
+            token: worker.token
+          };
+
+          console.log(data);
+
+          this.pagoService.desactivarPago(data)
+            .pipe(first()).subscribe(resp => console.log(resp));
+        });
+
     }
   }
 }

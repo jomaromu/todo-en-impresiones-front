@@ -517,8 +517,14 @@ export class PedidoComponent implements OnInit {
       }, 0);
 
       const mapPagos = pedido.pedidoDB.pagos_pedido.map(pago => {
+
+        if (pago.estado === false) {
+          return 0;
+        }
         return pago.monto;
       });
+
+      console.log(mapPagos);
 
       const totalPagos: number = mapPagos.reduce((acc, current) => {
         return acc + current;
@@ -740,7 +746,7 @@ export class PedidoComponent implements OnInit {
 
     this.wsService.escuchar('recibir-archivos')
       .subscribe((data: any) => {
-        console.log(data);
+        // console.log(data);
         this.cargarArchivos();
       });
   }
@@ -838,7 +844,7 @@ export class PedidoComponent implements OnInit {
           .subscribe((pedido: Pedido) => {
 
             this.pagos = pedido.pedidoDB.pagos_pedido;
-            console.log(this.pagos);
+            // console.log(this.pagos);
           });
       });
   }
@@ -849,6 +855,16 @@ export class PedidoComponent implements OnInit {
         this.costoDelPedido(pedido);
         this.obtenerPagosPorPedido(pedido.pedidoDB._id);
       });
+  }
+
+  checkEstadoPago(e: Event, pago: string): void {
+
+    const evento = (e.target as HTMLInputElement).checked;
+
+    if (!evento) {
+      this.store.dispatch(modalActions.cargarModal({ tipo: 'estado-pago', estado: true, data: { evento, pedido: this.pedido._id, pago } }));
+    }
+
   }
 
 }
