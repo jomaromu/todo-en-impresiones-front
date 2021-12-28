@@ -280,7 +280,8 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <div id="total-compra" *ngIf="objTotal.pedido !== 0">
+                        <!-- *ngIf="objTotal.pedido !== 0" -->
+                        <div id="total-compra">
                             <table class="table" style="max-width: 250px; width: 120px;">
                                 <tbody>
                                     <tr>
@@ -508,13 +509,16 @@
                                     <td>
                                         <div class="form-check form-switch">
                                             <input class="form-check-input" type="checkbox" role="switch"
-                                                [checked]="pago.estado" (change)="checkEstadoPago($event, pago._id)">
+                                                [disabled]="pago.estado === false" [checked]="pago.estado"
+                                                [ngClass]="{'no-drop': pago.estado === false}"
+                                                (change)="checkEstadoPago($event, pago._id)">
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <div id="total-compra" *ngIf="objTotal.pedido !== 0">
+                        <!-- *ngIf="objTotal.pedido !== 0" -->
+                        <div id="total-compra">
                             <table class="table" style="max-width: 250px; width: 120px;">
                                 <tbody>
                                     <tr>

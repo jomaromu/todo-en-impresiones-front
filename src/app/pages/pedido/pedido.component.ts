@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PedidoService } from '../../services/pedido.service';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../reducers/globarReducers';
-import { first } from 'rxjs/operators';
+import { first, take } from 'rxjs/operators';
 import { Pedido, PedidoDB } from '../../interfaces/pedido';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -106,9 +106,6 @@ export class PedidoComponent implements OnInit {
     this.cargarFormulario();
     this.obtenerPedido();
     this.cargarArchivos();
-    // this.obtenerPagos();
-    // this.cargarProductos();
-    // this.cagarUsuarioEtapa();
   }
 
   cargarFormulario(): void {
@@ -147,9 +144,9 @@ export class PedidoComponent implements OnInit {
           idPedido
         };
 
-        this.pedidoService.obtenerPedido(data).pipe(first())
+        this.pedidoService.obtenerPedido(data).pipe(take(3))
           .subscribe((pedido: Pedido) => {
-            // console.log(pedido);
+            console.log(pedido);
             this.pedido = pedido.pedidoDB;
             this.pedidoCompleto = pedido;
             this.cargarSelects();
@@ -524,8 +521,6 @@ export class PedidoComponent implements OnInit {
         return pago.monto;
       });
 
-      console.log(mapPagos);
-
       const totalPagos: number = mapPagos.reduce((acc, current) => {
         return acc + current;
       }, 0);
@@ -565,9 +560,12 @@ export class PedidoComponent implements OnInit {
     // tslint:disable-next-line: max-line-length
     this.store.dispatch(totalesAction.obtenerTotalesPedido({ pedido: this.objTotal.pedido, subtotal: this.objTotal.subtotal, itbms: this.objTotal.itbms, pagos: this.objTotal.pagos, total: this.objTotal.total }));
 
-    this.store.select('login').pipe(first())
+    this.store.select('login')
+      // .pipe(first())
+      .pipe(take(3))
       .subscribe(worker => {
 
+        // console.log('ok');
         // Actualizar pedido
         const data = {
           subtotal: this.objTotal.subtotal,
@@ -575,7 +573,7 @@ export class PedidoComponent implements OnInit {
           id: this.pedido._id
         };
 
-        this.pedidoService.editarPedido(data, worker.token).subscribe();
+        this.pedidoService.editarPedido(data, worker.token).pipe(first()).subscribe(); // revisar first
 
       });
   }
@@ -596,10 +594,6 @@ export class PedidoComponent implements OnInit {
           });
       });
   }
-
-  // actualizarProducto(): void {
-  //   // console.log(this.forma);
-  // }
 
   eliminarProductoPedido(productoPedido: Productospedido, pedido: PedidoDB): void {
 
@@ -841,19 +835,21 @@ export class PedidoComponent implements OnInit {
       .subscribe(worker => {
 
         this.pagoService.obtenerPagosPorPedido(worker.token, idPedido)
+          .pipe(first())
           .subscribe((pedido: Pedido) => {
 
             this.pagos = pedido.pedidoDB.pagos_pedido;
-            // console.log(this.pagos);
           });
       });
   }
 
   obtenerPagosSocket(): void {
     this.wsService.escuchar('recibir-pagos')
+      .pipe(take(3))
       .subscribe((pedido: Pedido) => {
+        // console.log(pedido);
         this.costoDelPedido(pedido);
-        this.obtenerPagosPorPedido(pedido.pedidoDB._id);
+        this.pagos = pedido.pedidoDB.pagos_pedido;
       });
   }
 

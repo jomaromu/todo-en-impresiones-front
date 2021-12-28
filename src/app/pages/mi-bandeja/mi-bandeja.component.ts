@@ -285,8 +285,10 @@ export class MiBandejaComponent implements OnInit {
 
   cargarTodosPedidos(): void {
 
-    this.store.select('login').pipe(first())
+    this.store.select('login')
+      .pipe(first())
       .subscribe(worker => {
+        // console.log('ok');
         this.pedidoService.obtenerPedidos(worker.token)
           .subscribe((pedidos: Pedido) => {
             // console.log(pedidos);

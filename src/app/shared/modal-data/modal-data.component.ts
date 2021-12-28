@@ -62,12 +62,10 @@ export class ModalDataComponent implements OnInit {
   constructor(
     private store: Store<AppState>,
     private fb: FormBuilder,
-    private cdref: ChangeDetectorRef,
     private archivoService: ArchivosService,
     private wsService: WebsocketsService,
     private metodoPagoService: MetodoPagoService,
     private pagoService: PagosService,
-    private wbServices: WebsocketsService,
     private currentPipe: CurrencyPipe
   ) { }
 
@@ -386,7 +384,9 @@ export class ModalDataComponent implements OnInit {
                     'success'
                   );
 
-                  this.wsService.emitir('cargar-pagos');
+                  // this.wsService.emitir('cargar-pagos');
+                  // this.pagoService.obtenerPagosPorPedido(data.token, data.pedido)
+                  //   .subscribe();
 
                 }
 
@@ -445,6 +445,8 @@ export class ModalDataComponent implements OnInit {
 
     if (!this.data.data.evento) {
 
+      this.store.dispatch(loadingAction.cargarLoading());
+
       this.store.select('login').pipe(first())
         .subscribe(worker => {
 
@@ -461,10 +463,57 @@ export class ModalDataComponent implements OnInit {
             token: worker.token
           };
 
-          console.log(data);
+          Swal.fire({
+            title: 'Mensaje',
+            text: '¿Desea desactivar este pago?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Desactivar pago',
+            cancelButtonAriaLabel: 'Cancelar'
+          }).then((result) => {
+            if (result.isConfirmed) {
 
-          this.pagoService.desactivarPago(data)
-            .pipe(first()).subscribe(resp => console.log(resp));
+              this.pagoService.desactivarPago(data).pipe(first())
+                .subscribe((resp: any) => {
+
+                  if (resp.ok === false) {
+
+                    this.store.dispatch(loadingAction.quitarLoading());
+
+                    Swal.fire(
+                      'Mensaje',
+                      `Error al desactivar el pago`,
+                      'error'
+                    );
+
+                  } else {
+
+                    this.store.dispatch(modalActions.quitarModal());
+                    this.store.dispatch(loadingAction.quitarLoading());
+
+                    Swal.fire(
+                      'Mensaje',
+                      'Pago Desactivado',
+                      'success'
+                    );
+
+                    // this.wsService.emitir('cargar-pagos');
+                    // this.pagoService.obtenerPagosPorPedido(data.token, data.idPedido)
+                    //   .subscribe();
+
+                  }
+
+                });
+
+            } else {
+
+              this.wsService.emitir('cargar-pagos');
+              this.store.dispatch(loadingAction.quitarLoading());
+
+            }
+          });
         });
 
     }
