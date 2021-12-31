@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { HttpEventType } from '@angular/common/http';
 import { Store } from '@ngrx/store';
@@ -9,13 +9,13 @@ import { ArchivosService } from '../../services/archivos.service';
 import { WebsocketsService } from '../../services/sockets/websockets.service';
 import { MetodoPagoService } from '../../services/metodo-pago.service';
 import { MetodoPago } from 'src/app/interfaces/metodo-pago';
-import { ModalReducerInterface } from '../../reducers/modal/modal.reducer';
 import Swal from 'sweetalert2';
 import validator from 'validator';
 import { PagosService } from '../../services/pagos.service';
 import * as loadingAction from '../../reducers/loading/loading.actions';
 import { Pagos } from '../../interfaces/pagos';
 import { CurrencyPipe } from '@angular/common';
+import { Usuario } from '../../interfaces/resp-worker';
 
 
 @Component({
@@ -103,6 +103,7 @@ export class ModalDataComponent implements OnInit {
             break;
           case 'ver-diseniadores':
             this.data = resp;
+            this.cargarDistribucion();
             break;
           case 'crear-pago':
             this.data = resp;
@@ -115,6 +116,11 @@ export class ModalDataComponent implements OnInit {
       });
 
     this.cargarModal();
+  }
+
+  cargarDistribucion(): void {
+    const usuarios: Usuario = this.data;
+    // console.log(usuarios);
   }
 
   cerrarModal(): void {

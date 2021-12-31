@@ -17,11 +17,15 @@
                     <!-- nombre cliente -->
                     <div class="ctrl-creacion">
                         <label class="col-sm-2 col-form-label">Cliente:</label>
-                        <input type="search" class="form-control" [attr.data-idCliente]='idCliente' (keyup)="buscarClienteNombre($event)"
-                            [ngClass]="{'borde-rojo': checkNombre}" formControlName="nombre" #nombre>
+                        <input type="search" class="form-control" [attr.data-idCliente]='idCliente'
+                            (keyup)="buscarClienteNombre($event)" [ngClass]="{'borde-rojo': checkNombre}"
+                            formControlName="nombre" #nombre>
                         <div id="placeHolderCliente" #placeHolderCliente>
-                            <a *ngFor="let cliente of clientes" role="button"
-                                (click)="detectarCliente(cliente)">{{cliente.nombre}}</a>
+                            <a *ngFor="let cliente of clientes" role="button" (click)="detectarCliente(cliente)">
+                                <!-- {{cliente.nombre}} {{cliente.telefono}} -->
+                                <span>{{cliente.nombre}}</span>
+                                <span>{{cliente.telefono}}</span>
+                            </a>
                         </div>
                     </div>
 
@@ -38,11 +42,15 @@
                     <!-- Telefono -->
                     <div class="ctrl-creacion">
                         <label class="col-sm-2 col-form-label">Teléfono:</label>
-                        <input type="search" class="form-control" [attr.data-idCliente]='idCliente' (keyup)="buscarClienteTelefono($event)"
-                            [ngClass]="{'borde-rojo': checkTelefono}" formControlName="telefono">
+                        <input type="search" class="form-control" [attr.data-idCliente]='idCliente'
+                            (keyup)="buscarClienteTelefono($event)" [ngClass]="{'borde-rojo': checkTelefono}"
+                            formControlName="telefono">
                         <div id="placeHolderCliente" #placeHolderClienteCel>
-                            <a *ngFor="let cliente of clientes" role="button"
-                                (click)="detectarCliente(cliente)">{{cliente.nombre}}</a>
+                            <a *ngFor="let cliente of clientes" role="button" (click)="detectarCliente(cliente)">
+                                <!-- {{cliente.nombre}} -->
+                                <span>{{cliente.nombre}}</span>
+                                <span>{{cliente.telefono}}</span>
+                            </a>
                         </div>
                     </div>
 

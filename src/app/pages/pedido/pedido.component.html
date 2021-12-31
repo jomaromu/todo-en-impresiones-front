@@ -12,7 +12,7 @@
         </li>
 
         <!-- producto -->
-        <li class="nav-item" role="presentation">
+        <li class="nav-item" role="presentation" *ngIf="role !== 'DiseniadorRole'">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#producto" type="button" role="tab"
                 aria-selected="false">
                 <i class="fas fa-box-open"></i>
@@ -39,7 +39,7 @@
         </li>
 
         <!-- pagos -->
-        <li class="nav-item" role="presentation">
+        <li class="nav-item" role="presentation" *ngIf="role !== 'DiseniadorRole'">
             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pagos" type="button" role="tab"
                 aria-selected="false">
                 <i class="fas fa-money-check-alt"></i>
@@ -62,7 +62,7 @@
                             <input type="text" class="form-control" id="nombre" [value]="pedido?.cliente.nombre"
                                 disabled>
                         </div>
-                        <div>
+                        <div *ngIf="role !== 'DiseniadorRole'">
                             <label for="nombre" class="form-label">Teléfono:</label>
                             <input type="text" class="form-control" id="telefono" [value]="pedido?.cliente.telefono"
                                 disabled>
@@ -79,7 +79,7 @@
                 <!-- informacion pedido -->
                 <div id="info-pedido" class="wrap-info">
                     <h6>Información de pedido</h6>
-                    <form [formGroup]="forma" id="formulario" (ngSubmit)="actualizarInfo()">
+                    <form [formGroup]="forma" id="formulario" (ngSubmit)="actualizarInfo('info')">
 
 
                         <!-- fecha registro -->
@@ -172,7 +172,8 @@
 
                         <!-- botones acciones -->
                         <div id="wrap-buttons-acciones">
-                            <button class="buttons" type="submit">Guardar Cambios</button>
+                            <span *ngIf="role === 'DiseniadorRole'"></span>
+                            <button class="buttons" type="submit" *ngIf="role !== 'DiseniadorRole'">Guardar Cambios</button>
 
                             <div id="wrap-acciones">
                                 <button class="buttons" type="button" data-bs-toggle="collapse"
@@ -403,41 +404,39 @@
             <div class="wrapper-tap" id="tap-seguimiento">
                 <h6>Información seguimiento</h6>
                 <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Producto</th>
-                            <!-- <th>Cantidad</th>
-                            <th>Precio</th> -->
-                            <th>Seg. Diseño</th>
-                            <th>Seg. Producción</th>
-                            <th>Controles</th>
-                        </tr>
-                    </thead>
-
                     <tbody>
                         <tr *ngFor="let productoPedido of productosPedidos; let i = index">
-                            <td>{{i+1}}</td>
-                            <td>{{productoPedido?.producto.nombre}}</td>
-                            <!-- <td>{{productoPedido?.cantidad}}</td>
-                            <td>{{productoPedido?.precio | currency:'USD':'symbol'}}</td> -->
                             <td>
-                                <div>
-                                    <textarea class="form-control" id="seg-dise" rows="6"
-                                        (change)="detectarSeguimiento($event, productoPedido._id, 0)"
-                                        #segDise>{{productoPedido.seguimiento_disenio}}</textarea>
-                                </div>
-                            </td>
-                            <td>
-                                <div>
-                                    <textarea class="form-control" id="seg-prod" rows="6"
-                                        (change)="detectarSeguimiento($event, productoPedido._id, 1)"
-                                        #segProd>{{productoPedido.seguimiento_produccion}}</textarea>
-                                </div>
-                            </td>
-                            <td>
-                                <i class="fas fa-save" role="button"
-                                    (click)="guardarSeguimiento(productoPedido._id, pedido._id, segDise, segProd)"></i>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">{{productoPedido?.producto.nombre}}</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr>
+                                            <td style="width: 50px;"> Seg. Diseño </td>
+                                            <td>
+                                                <div>
+                                                    <textarea class="form-control" id="seg-dise" rows="6"
+                                                        (change)="detectarSeguimiento($event, productoPedido._id, 0)"
+                                                        #segDise>{{productoPedido.seguimiento_disenio}}</textarea>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width: 50px;"> Seg. Prod. </td>
+                                            <td>
+                                                <div>
+                                                    <textarea class="form-control" id="seg-prod" rows="6"
+                                                        (change)="detectarSeguimiento($event, productoPedido._id, 1)"
+                                                        #segProd>{{productoPedido.seguimiento_produccion}}</textarea>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </td>
                         </tr>
                     </tbody>
@@ -512,6 +511,9 @@
                                                 [disabled]="pago.estado === false" [checked]="pago.estado"
                                                 [ngClass]="{'no-drop': pago.estado === false}"
                                                 (change)="checkEstadoPago($event, pago._id)">
+                                            <i class="fas fa-question-circle" id="motivoPagoAlert"
+                                                *ngIf="pago.estado === false" role="button"
+                                                (click)="motivoPagoAlert(pago)"></i>
                                         </div>
                                     </td>
                                 </tr>

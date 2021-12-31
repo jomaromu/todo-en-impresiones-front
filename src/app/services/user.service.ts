@@ -91,7 +91,7 @@ export class UserService {
       );
   }
 
-  // Obtener todos los usuarios por role
+  // Obtener todos los usuarios
   obtenerRoles(token: string): Observable<any> {
 
     const url = `${environment.url}/colrole/obtenerTodos`;

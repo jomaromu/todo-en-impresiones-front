@@ -99,7 +99,8 @@ export class LoginComponent implements OnInit {
         } else {
           // console.log(resp);
           this.store.dispatch(userActions.crearToken({ token: resp.token }));
-          this.router.navigateByUrl('/dashboard');
+          // this.router.navigateByUrl('/dashboard');
+          this.router.navigateByUrl('/dashboard/mi-bandeja');
         }
       });
     }

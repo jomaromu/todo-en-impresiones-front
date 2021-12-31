@@ -339,7 +339,10 @@ export class PedidosComponent implements OnInit {
 
   limpiarForma(): void {
 
-    this.forma.reset();
+    // this.forma.reset();
+    this.forma.controls.nombre.reset();
+    this.forma.controls.telefono.reset();
+    this.forma.controls.sucursal.reset();
   }
 
   guardar(): void {
@@ -405,23 +408,38 @@ export class PedidosComponent implements OnInit {
                     } else if (pedido.ok === true) {
 
                       // console.log(pedido);
+                      this.router.navigate(['dashboard/pedido'], { queryParams: { id: pedido.pedidoDB._id } });
 
-                      Swal.fire({
-                        title: 'Mensaje',
-                        text: 'Pedido creado, continuar editando el pedido',
-                        icon: 'info',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ir al pedido',
-                        cancelButtonText: 'Nuevo pedido'
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          this.router.navigate(['dashboard/pedido'], { queryParams: { id: pedido.pedidoDB._id } });
-                        } else {
-                          this.forma.reset();
-                        }
-                      });
+                      Swal.fire(
+                        'Mensaje',
+                        `${pedido.mensaje}`,
+                        'info'
+                      );
+
+                      // Swal.fire({
+                      //   title: 'Mensaje',
+                      //   text: 'Pedido creado',
+                      //   icon: 'info',
+                      //   showCancelButton: false,
+                      //   confirmButtonColor: '#3085d6',
+                      //   cancelButtonColor: '#d33',
+                      //   confirmButtonText: 'Ok',
+                      //   cancelButtonText: 'Nuevo pedido'
+                      // }).then((result) => {
+                      //   if (result.isConfirmed) {
+                      //     this.router.navigate(['dashboard/pedido'], { queryParams: { id: pedido.pedidoDB._id } });
+                      //   }
+                      //    else {
+                      //     this.limpiarForma();
+                      //   }
+                      // });
+                    } else {
+
+                      Swal.fire(
+                        'Mensaje',
+                        `${pedido.mensaje}`,
+                        'error'
+                      );
                     }
                   });
               }

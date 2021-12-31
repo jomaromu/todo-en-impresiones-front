@@ -59,7 +59,7 @@ export class PedidoService {
 
     return this.http.get(url, { headers: header })
       .pipe(
-        map((resp: Array<any>) => {
+        map((resp: any) => {
           return resp;
         })
       );
@@ -94,9 +94,13 @@ export class PedidoService {
   obtenerPedidosPorRole(data: any): Observable<any> {
 
     const url = `${environment.url}/pedidos/obtenerPedidosPorRole`;
-    // tslint:disable-next-line: max-line-length
-    const header = new HttpHeaders({ token: data.token, role: data.role, idSUcursalWorker: data.idSUcursalWorker, idUsuario: data.idUsuario });
 
+    // tslint:disable-next-line: max-line-length
+    // const header = new HttpHeaders({ token: data.token, role: data.role, idSUcursalWorker: data.idSUcursalWorker, idUsuario: data.idUsuario });
+    // tslint:disable-next-line: max-line-length
+    const header = new HttpHeaders({ token: data.token, role: data.role, idSucursalWorker: data.idSucursalWorker, idUsuario: data.idUsuario });
+
+    // console.log(data);
     return this.http.get(url, { headers: header })
       .pipe(map(resp => resp));
   }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { PedidoService } from '../../services/pedido.service';
 import { Store } from '@ngrx/store';
@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { OrigenPedidoService } from '../../services/origen-pedido.service';
 import { OrigenPedido } from '../../interfaces/origen-pedido';
 import { UserService } from '../../services/user.service';
-import { UsuarioWorker } from '../../interfaces/resp-worker';
+import { UsuarioWorker, Usuario } from '../../interfaces/resp-worker';
 import { SucursalService } from '../../services/sucursal.service';
 import { SucursalesDB } from '../../interfaces/sucursales';
 import * as loadingActions from '../../reducers/loading/loading.actions';
@@ -19,7 +19,7 @@ import Swal from 'sweetalert2';
 import { ProductoService } from '../../services/producto.service';
 import { ProductoPedidoService } from '../../services/producto-pedido.service';
 import { Productospedido, ProductoPedido } from '../../interfaces/producto-pedido';
-import { Producto } from 'src/app/interfaces/producto';
+import { Producto } from '../../interfaces/producto';
 import { ProductoDB } from '../../interfaces/producto';
 import { ArchivosService } from '../../services/archivos.service';
 import { Archivo } from '../../interfaces/archivo';
@@ -27,7 +27,7 @@ import { WebsocketsService } from '../../services/sockets/websockets.service';
 import { ObjTotales } from '../../reducers/totales-pedido/totales.actions';
 import * as totalesAction from '../../reducers/totales-pedido/totales.actions';
 import { PagosService } from '../../services/pagos.service';
-import { Pagos, PagoDB } from '../../interfaces/pagos';
+import { PagoDB } from '../../interfaces/pagos';
 
 @Component({
   selector: 'app-pedido',
@@ -80,6 +80,8 @@ export class PedidoComponent implements OnInit {
     // { id: 2, nombre: 'Delivery' },
   ];
 
+  role: string;
+
   constructor(
     private route: ActivatedRoute,
     private pedidoService: PedidoService,
@@ -91,7 +93,6 @@ export class PedidoComponent implements OnInit {
     private store: Store<AppState>,
     private fb: FormBuilder,
     private http: HttpClient,
-    private cdref: ChangeDetectorRef,
     private archivoService: ArchivosService,
     private wsService: WebsocketsService,
     private pagoService: PagosService
@@ -136,8 +137,10 @@ export class PedidoComponent implements OnInit {
 
     const idPedido = this.route.snapshot.queryParamMap.get('id');
 
-    this.store.select('login').pipe(first())
+    this.store.select('login').pipe(take(3))
       .subscribe(worker => {
+
+        this.role = worker?.usuario?.colaborador_role;
 
         const data = {
           token: worker.token,
@@ -146,7 +149,7 @@ export class PedidoComponent implements OnInit {
 
         this.pedidoService.obtenerPedido(data).pipe(take(3))
           .subscribe((pedido: Pedido) => {
-            console.log(pedido);
+            // console.log(pedido);
             this.pedido = pedido.pedidoDB;
             this.pedidoCompleto = pedido;
             this.cargarSelects();
@@ -164,9 +167,15 @@ export class PedidoComponent implements OnInit {
     this.store.select('login').pipe(first())
       .subscribe(worker => {
 
+        const role = worker.usuario.colaborador_role;
+
         const cargarFechaEntrega = () => {
           this.forma.controls.fechaEntrega.setValue(this.pedido.fecha_entrega);
           // console.log(this.pedido);
+
+          if (role === 'DiseniadorRole') {
+            this.forma.controls.fechaEntrega.disable();
+          }
         };
 
         const cargarPrioridad = () => {
@@ -174,6 +183,10 @@ export class PedidoComponent implements OnInit {
             .pipe().subscribe((data: any) => {
               this.prioridadesPedido = data;
               this.forma.controls.prioridad.setValue(this.pedido.prioridad_pedido);
+
+              if (role === 'DiseniadorRole') {
+                this.forma.controls.prioridad.disable();
+              }
             });
         };
 
@@ -191,6 +204,10 @@ export class PedidoComponent implements OnInit {
               this.estadosPedido = data;
               this.forma.controls.estadoPedido.setValue(this.pedido.estado_pedido);
             });
+
+          if (role === 'DiseniadorRole') {
+            this.forma.controls.estadoPedido.disable();
+          }
         };
 
 
@@ -200,6 +217,10 @@ export class PedidoComponent implements OnInit {
           this.origenPedidoService.obtenerOrigenes(worker.token).subscribe(data => {
             this.origenes = data;
             this.forma.controls.origenVenta.setValue(this.pedido.origen_pedido?._id); // Hacer populate en la DB
+
+            if (role === 'DiseniadorRole') {
+              this.forma.controls.origenVenta.disable();
+            }
           });
 
         };
@@ -222,6 +243,10 @@ export class PedidoComponent implements OnInit {
           } else {
             this.forma.controls.diseniador.setValue(this.pedido.asignado_a._id);
           }
+
+          if (role === 'DiseniadorRole') {
+            this.forma.controls.diseniador.disable();
+          }
         };
 
         const cargarVendedor = () => {
@@ -240,6 +265,10 @@ export class PedidoComponent implements OnInit {
             .subscribe(data => {
               this.sucursales = data.sucursalesDB;
               this.forma.controls.sucursal.setValue(this.pedido.sucursal._id);
+
+              if (role === 'DiseniadorRole') {
+                this.forma.controls.sucursal.disable();
+              }
             });
         };
 
@@ -258,12 +287,19 @@ export class PedidoComponent implements OnInit {
 
   cargarDistribucion(): void {
 
-    this.store.dispatch(modalActions.cargarModal({ tipo: 'ver-diseniadores', estado: true }));
+    this.store.select('login').pipe(first())
+      .subscribe(worker => {
+
+        this.userService.obtenerUsuariosRole(worker.token, 'DiseniadorRole')
+          .subscribe((usuarios: Usuario) => {
+
+            this.store.dispatch(modalActions.cargarModal({ tipo: 'ver-diseniadores', estado: true, data: usuarios }));
+          });
+      });
+
   }
 
-  actualizarInfo(): void {
-
-    // console.log(this.forma.controls.etapaPedido.value);
+  actualizarInfo(tipo: string): void {
 
     this.store.dispatch(loadingActions.cargarLoading());
 
@@ -272,6 +308,7 @@ export class PedidoComponent implements OnInit {
       // console.log(this.pedido._id);
 
       const data = {
+        tipo,
         id: this.pedido._id,
         sucursal: this.forma.controls.sucursal.value,
         etapa_pedido: parseInt(this.forma.controls.etapaPedido.value, 10),
@@ -279,12 +316,17 @@ export class PedidoComponent implements OnInit {
         // prioridad_pedido: Number(this.forma.controls.prioridad.value),
         prioridad_pedido: this.forma.controls.prioridad.value,
         // tslint:disable-next-line: max-line-length
-        asignado_a: this.forma.controls.diseniador.value === 'null' || !this.forma.controls.diseniador.value ? this.forma.controls.diseniador.setValue(null) : this.forma.controls.diseniador.value,
+        // asignado_a: this.forma.controls.diseniador.value === 'null' || this.forma.controls.diseniador.value === null || this.forma.controls.diseniador.value === undefined ? this.forma.controls.diseniador.setValue(null) : this.forma.controls.diseniador.value,
         // estado_pedido: Number(this.forma.controls.estadoPedido.value),
+        asignado_a: null,
         estado_pedido: this.forma.controls.estadoPedido.value,
         fecha_entrega: this.forma.controls.fechaEntrega.value,
         origen_pedido: this.forma.controls.origenVenta.value,
       };
+
+      if (this.forma.controls.diseniador.value !== null) {
+        data.asignado_a = this.forma.controls.diseniador.value;
+      }
 
       if (data.etapa_pedido === 1 && !data.asignado_a) {
 
@@ -313,6 +355,8 @@ export class PedidoComponent implements OnInit {
           .subscribe(worker => {
             this.pedidoService.editarPedido(data, worker.token)
               .subscribe((pedidoDB: any) => {
+
+                // console.log(pedidoDB);
 
                 this.store.dispatch(loadingActions.quitarLoading());
 
@@ -422,6 +466,7 @@ export class PedidoComponent implements OnInit {
       .subscribe(worker => {
 
         const data = {
+          tipo: 'producto',
           pedido: pedido._id,
           producto: idProducto,
           token: worker.token,
@@ -495,65 +540,65 @@ export class PedidoComponent implements OnInit {
     const productoPedido: Array<any> = pedido?.pedidoDB?.productos_pedidos;
     const itbms = pedido?.pedidoDB?.itbms;
 
-    if (productoPedido.length === 0) {
-      this.objTotal.pedido = 0;
-      this.objTotal.itbms = 0;
-      this.objTotal.subtotal = 0;
-      this.objTotal.pagos = 0;
-      this.objTotal.total = 0;
+    // if (productoPedido.length === 0) {
+    //   this.objTotal.pedido = 0;
+    //   this.objTotal.itbms = 0;
+    //   this.objTotal.subtotal = 0;
+    //   this.objTotal.pagos = 0;
+    //   this.objTotal.total = 0;
 
-    } else {
+    // } else {
 
 
-      const mapTotalPedido = productoPedido.map(productoPed => {
-        return productoPed.total;
-      });
+    const mapTotalPedido = productoPedido.map(productoPed => {
+      return productoPed.total;
+    });
 
-      const totalPedido = mapTotalPedido.reduce((acc, current) => {
-        return acc + current;
-      }, 0);
+    const totalPedido = mapTotalPedido.reduce((acc, current) => {
+      return acc + current;
+    }, 0);
 
-      const mapPagos = pedido.pedidoDB.pagos_pedido.map(pago => {
+    const mapPagos = pedido.pedidoDB.pagos_pedido.map(pago => {
 
-        if (pago.estado === false) {
-          return 0;
-        }
-        return pago.monto;
-      });
+      // if (pago.estado === false) {
+      //   return 0;
+      // }
+      return pago.monto;
+    });
 
-      const totalPagos: number = mapPagos.reduce((acc, current) => {
-        return acc + current;
-      }, 0);
+    const totalPagos: number = mapPagos.reduce((acc, current) => {
+      return acc + current;
+    }, 0);
 
-      // console.log(totalPagos);
+    // console.log(totalPagos);
 
-      let itbm = 0;
+    let itbm = 0;
 
-      if (itbms === false || !itbms) {
+    if (itbms === false || !itbms) {
 
-        const subtotal = (totalPedido + itbm);
-        const total = (subtotal - totalPagos);
+      const subtotal = (totalPedido + itbm);
+      const total = (subtotal - totalPagos);
 
-        this.objTotal.pedido = totalPedido;
-        this.objTotal.itbms = itbm;
-        this.objTotal.subtotal = subtotal;
-        this.objTotal.pagos = totalPagos;
-        this.objTotal.total = total;
+      this.objTotal.pedido = totalPedido;
+      this.objTotal.itbms = itbm;
+      this.objTotal.subtotal = subtotal;
+      this.objTotal.pagos = totalPagos;
+      this.objTotal.total = total;
 
-      }
+    }
 
-      if (itbms === true) {
+    if (itbms === true) {
 
-        itbm = totalPedido * 0.07;
-        const subtotal = (totalPedido + itbm);
-        const total = (subtotal - totalPagos);
+      itbm = totalPedido * 0.07;
+      const subtotal = (totalPedido + itbm);
+      const total = (subtotal - totalPagos);
 
-        this.objTotal.pedido = totalPedido;
-        this.objTotal.itbms = itbm;
-        this.objTotal.subtotal = subtotal;
-        this.objTotal.pagos = totalPagos;
-        this.objTotal.total = total;
-      }
+      this.objTotal.pedido = totalPedido;
+      this.objTotal.itbms = itbm;
+      this.objTotal.subtotal = subtotal;
+      this.objTotal.pagos = totalPagos;
+      this.objTotal.total = total;
+      // }
 
     }
 
@@ -568,6 +613,7 @@ export class PedidoComponent implements OnInit {
         // console.log('ok');
         // Actualizar pedido
         const data = {
+          tipo: 'general',
           subtotal: this.objTotal.subtotal,
           total: this.objTotal.total,
           id: this.pedido._id
@@ -582,6 +628,7 @@ export class PedidoComponent implements OnInit {
     const itbmsChecked = e.target.checked;
 
     const data = {
+      tipo: 'producto',
       itbms: itbmsChecked,
       id: pedido._id
     };
@@ -845,7 +892,7 @@ export class PedidoComponent implements OnInit {
 
   obtenerPagosSocket(): void {
     this.wsService.escuchar('recibir-pagos')
-      .pipe(take(3))
+      // .pipe(take(3))
       .subscribe((pedido: Pedido) => {
         // console.log(pedido);
         this.costoDelPedido(pedido);
@@ -861,6 +908,15 @@ export class PedidoComponent implements OnInit {
       this.store.dispatch(modalActions.cargarModal({ tipo: 'estado-pago', estado: true, data: { evento, pedido: this.pedido._id, pago } }));
     }
 
+  }
+
+  motivoPagoAlert(pago: any): void {
+
+    Swal.fire(
+      'Motivo',
+      `${pago.motivo}`,
+      'info'
+    );
   }
 
 }

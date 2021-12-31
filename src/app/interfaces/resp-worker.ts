@@ -32,5 +32,6 @@ export interface UsuarioWorker {
     identificacion: string;
     sucursal: any;
     permitidas: Array<string>;
+    pedidos: Array<any>;
     _id: any;
 }

@@ -1,10 +1,29 @@
 <div id="modal" #modal class="animate__animated animate__faster">
 
   <!-- diseñador -->
-  <div class="wrapper animate__slideInDown animate__animated animate__faster" *ngIf="data.tipo === 'ver-diseniadores'">
-    <h4 class="modal-title" id="modal-basic-title">{{data.tipo}}</h4>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="cerrarModal()">Cerrar</button>
+  <div class="wrapper animate__slideInDown animate__animated animate__faster" id="ver-diseniadores"
+    *ngIf="data.tipo === 'ver-diseniadores'">
+    <h6>Distribución - Diseñadores</h6>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">No.</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Cant. Pedidos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of data.data.usuariosDB; let i = index">
+          <th scope="row">{{i + 1}}</th>
+          <td>{{usuario.nombre}}</td>
+          <td>{{usuario.pedidos.length}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="group-btn mt-5">
+      <button type="button" class="buttons" (click)="cerrarModal()">Cerrar</button>
     </div>
   </div>
 
@@ -99,7 +118,7 @@
         <label for="motivo" class="form-label">Motivo:</label>
         <textarea class="form-control" formControlName="motivo" id="motivo" rows="3"
           [ngClass]="{'borde-rojo': checkMotivo}"></textarea>
-          <label class="text-danger fs-6" *ngIf="checkMotivo">Mínimo 4 carácteres</label>
+        <label class="text-danger fs-6" *ngIf="checkMotivo">Mínimo 4 carácteres</label>
       </div>
 
       <div class="group-btn mt-5">

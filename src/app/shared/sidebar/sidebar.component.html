@@ -6,12 +6,15 @@
 
     <div id="perfil">
         <p>{{usuario?.usuario?.nombre}} {{usuario?.usuario?.apellido}}</p>
+        <span *ngFor="let item of roles">
+            <a *ngIf="item.id === role">{{item.nombre}}</a>
+        </span>
         <a role="button">Ver perfil</a>
     </div>
 
 
     <!-- primer nivel -->
-    <div class="group-items">
+    <div class="group-items" *ngIf="role === 'SuperRole' || role === 'AdminRole'">
         <a class="item-sidebar" routerLink="/dashboard/admin">
             <i class="fas fa-chart-bar"></i>
             <span>Dashboard</span>
@@ -25,7 +28,7 @@
         </a>
     </div>
 
-    <div class="group-items">
+    <div class="group-items" *ngIf="role !== 'DiseniadorRole'">
         <a class="item-sidebar" routerLink="/dashboard/nuevo-pedido">
             <i class="fas fa-shopping-cart"></i>
             <span>Crear Pedido</span>
@@ -33,7 +36,7 @@
     </div>
 
 
-    <div class="group-items">
+    <div class="group-items" *ngIf="role === 'SuperRole' || role === 'AdminRole'">
         <a class="item-sidebar" data-bs-toggle="collapse" href="#collapseExample" aria-expanded="false"
             aria-controls="collapseExample" id="catalogo">
             <i class="fas fa-book"></i>
@@ -113,14 +116,14 @@
         </div>
     </div>
 
-    <div class="group-items">
+    <div class="group-items" *ngIf="role === 'SuperRole' || role === 'AdminRole'">
         <a class="item-sidebar" routerLink="facturacion">
             <i class="fas fa-file-invoice-dollar"></i>
             <span>Facturación</span>
         </a>
     </div>
 
-    <div class="group-items">
+    <div class="group-items" *ngIf="role === 'SuperRole' || role === 'AdminRole'">
         <a class="item-sidebar" routerLink="/dashboard/reportes">
             <i class="fas fa-chart-pie"></i>
             <span>Reportes</span>

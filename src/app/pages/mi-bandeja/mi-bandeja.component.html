@@ -1,8 +1,8 @@
 <app-busqueda [pedidos]="pedidos" (emitirPedidos)="recibirPedidos($event)"></app-busqueda>
 
+<!-- *ngIf="role === 'SuperRole' || role === 'AdminRole' || role === 'ProduccionVIPRole'" -->
 <div id="wrapper">
-    <div id="wrap-craeciones" class="animate__animated" #wrapCreaciones
-        *ngIf="worker?.usuario?.colaborador_role === 'SuperRole'">
+    <div id="wrap-craeciones" class="animate__animated" *ngIf="role !== 'ProduccionNormalRole'" #wrapCreaciones>
 
         <div id="wrap-head">
 
@@ -18,7 +18,7 @@
                 <div id="body">
 
                     <!-- Seleccionar bandeja -->
-                    <div class="ctrl-creacion" *ngIf="role === 'SuperRole'">
+                    <div class="ctrl-creacion">
                         <label class="col-sm-2 col-form-label">Bandeja:</label>
                         <select class="form-select" formControlName="selBandeja" (change)="detectarUsuarios()">
                             <option [value]="bandeja.id" *ngFor="let bandeja of optBandeja">
@@ -27,7 +27,7 @@
                     </div>
 
                     <!-- Sucursal-->
-                    <div class="ctrl-creacion" *ngIf="role === 'SuperRole'">
+                    <div class="ctrl-creacion">
                         <label class="col-sm-2 col-form-label">Sucursal:</label>
                         <select class="form-select" formControlName="sucursal" (change)="detectarUsuarios()">
                             <option [value]="sucursal._id" *ngFor="let sucursal of sucursales?.sucursalesDB">
@@ -36,7 +36,7 @@
                     </div>
 
                     <!-- Usuarios-->
-                    <div class="ctrl-creacion" *ngIf="role === 'SuperRole'">
+                    <div class="ctrl-creacion">
                         <label class="col-sm-2 col-form-label">Usuarios:</label>
                         <select class="form-select" formControlName="usuarios">
                             <option [value]="userFake.id">{{userFake.nombre}}</option>

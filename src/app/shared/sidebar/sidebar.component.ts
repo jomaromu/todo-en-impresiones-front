@@ -18,6 +18,37 @@ import { Usuario } from '../../interfaces/resp-worker';
 export class SidebarComponent implements OnInit, AfterViewChecked {
 
   usuario: Usuario;
+  role: string;
+  roles = [
+    {
+      id: 'SuperRole',
+      nombre: 'Super Usuario'
+    },
+    {
+      id: 'AdminRole',
+      nombre: 'Administrador'
+    },
+    {
+      id: 'ProduccionNormalRole',
+      nombre: 'Producción'
+    },
+    {
+      id: 'ProduccionVIPRole',
+      nombre: 'Producción VIP'
+    },
+    {
+      id: 'VendedorNormalRole',
+      nombre: 'Vendedor'
+    },
+    {
+      id: 'VendedorVIPRole',
+      nombre: 'Vendedor VIP'
+    },
+    {
+      id: 'DiseniadorRole',
+      nombre: 'Diseñador'
+    },
+  ];
 
   constructor(
     private store: Store<AppState>,
@@ -36,67 +67,69 @@ export class SidebarComponent implements OnInit, AfterViewChecked {
     this.store.select('login').pipe(take(2))
       .subscribe(worker => {
         this.usuario = worker;
+        this.role = worker?.usuario?.colaborador_role;
       });
   }
 
   animacionRow(): void {
 
-    const catalogo = document.getElementById('catalogo');
-    const pedidos = document.getElementById('pedidos');
+    if (this.role === 'AdminRole' || this.role === 'SuperRole') {
 
-    catalogo.addEventListener('click', (e) => {
+      const catalogo = document.getElementById('catalogo');
+      const pedidos = document.getElementById('pedidos');
 
-      const isShow = catalogo.getAttribute('aria-expanded');
-      const rowCatalogo = document.getElementById('row-catalogo');
+      catalogo.addEventListener('click', (e) => {
 
-      if (isShow === 'true') {
+        const isShow = catalogo.getAttribute('aria-expanded');
+        const rowCatalogo = document.getElementById('row-catalogo');
 
-        anime({
-          targets: rowCatalogo,
-          rotateZ: 90,
-          easing: 'linear',
-          duration: 200
-        });
+        if (isShow === 'true') {
 
-      } else {
+          anime({
+            targets: rowCatalogo,
+            rotateZ: 90,
+            easing: 'linear',
+            duration: 200
+          });
 
-        anime({
-          targets: rowCatalogo,
-          rotateZ: 0,
-          easing: 'linear',
-          duration: 200
-        });
-      }
+        } else {
 
-    });
+          anime({
+            targets: rowCatalogo,
+            rotateZ: 0,
+            easing: 'linear',
+            duration: 200
+          });
+        }
 
-    pedidos.addEventListener('click', (e) => {
+      });
 
-      const isShow = pedidos.getAttribute('aria-expanded');
-      const rowPedidos = document.getElementById('row-pedidos');
+      pedidos.addEventListener('click', (e) => {
 
-      if (isShow === 'true') {
+        const isShow = pedidos.getAttribute('aria-expanded');
+        const rowPedidos = document.getElementById('row-pedidos');
 
-        anime({
-          targets: rowPedidos,
-          rotateZ: 90,
-          easing: 'linear',
-          duration: 200
-        });
+        if (isShow === 'true') {
 
-      } else {
+          anime({
+            targets: rowPedidos,
+            rotateZ: 90,
+            easing: 'linear',
+            duration: 200
+          });
 
-        anime({
-          targets: rowPedidos,
-          rotateZ: 0,
-          easing: 'linear',
-          duration: 200
-        });
-      }
+        } else {
 
-    });
+          anime({
+            targets: rowPedidos,
+            rotateZ: 0,
+            easing: 'linear',
+            duration: 200
+          });
+        }
 
-
+      });
+    }
   }
 
   cargarWorker(): void {

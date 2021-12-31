@@ -22,13 +22,13 @@
     }
 
     #perfil {
-        // background-color: red;
+        // background-color: blue;
         display: flex;
         flex-direction: column;
         text-align: center;
 
         a {
-            margin-top: -15px;
+            // margin-top: -15px;
             text-decoration: none;
             color: darken($color: $white, $amount: 2);
             font-size: map-get($map: $map-fonts, $key: 'xm');

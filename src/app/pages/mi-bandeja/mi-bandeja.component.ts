@@ -63,29 +63,61 @@ export class MiBandejaComponent implements OnInit {
 
         // console.log(this.worker);
 
-        if (worker.ok === true && worker.usuario.colaborador_role === 'SuperRole') {
+        if ((worker.ok === true) && (worker.usuario.colaborador_role === 'SuperRole' || worker.usuario.colaborador_role === 'AdminRole')) {
+
           this.role = worker.usuario.colaborador_role;
-          this.formularioAdmin();
+          this.formularioAdmin('SuperRole');
           this.cargarTodosPedidos();
+
         } else if (worker.ok === true && worker.usuario.colaborador_role === 'VendedorNormalRole') {
+
           this.cargarPedidosVendedor(worker);
+
+        } else if (worker.ok === true && worker.usuario.colaborador_role === 'ProduccionVIPRole') {
+
+          this.cargarPedidosPorRole();
+          this.formularioProduccionVIP('ProduccionVIPRole');
+
         } else if (worker.ok === true && worker.usuario.colaborador_role === 'ProduccionNormalRole') {
+
+          this.role = worker.usuario.colaborador_role;
           this.cargarPedidosProduccion(worker);
+
         } else if (worker.ok === true && worker.usuario.colaborador_role === 'DiseniadorRole') {
+
           this.cargarPedidosDiseniador(worker);
         }
       });
   }
 
-  seleccionarBandeja(): void {
+  seleccionarBandeja(role: string): void {
 
-    this.optBandeja = [
-      { nombre: 'Todas', id: 'null' },
-      { nombre: 'Producción', id: 'prod' },
-      { nombre: 'Vendedor', id: 'vend' },
-      { nombre: 'Diseñador', id: 'dise' },
-      { nombre: 'Admin', id: 'admin' }
-    ];
+    switch (role) {
+      case 'ProduccionVIPRole':
+        this.optBandeja = [
+          { nombre: 'Producción', id: 'prod' },
+        ];
+        break;
+      case 'SuperRole':
+        this.optBandeja = [
+          { nombre: 'Todas', id: 'null' },
+          { nombre: 'Producción', id: 'prod' },
+          { nombre: 'Vendedor', id: 'vend' },
+          { nombre: 'Diseñador', id: 'dise' },
+          { nombre: 'Admin', id: 'admin' }
+        ];
+        break;
+      case 'AdminRole':
+        this.optBandeja = [
+          { nombre: 'Todas', id: 'null' },
+          { nombre: 'Producción', id: 'prod' },
+          { nombre: 'Vendedor', id: 'vend' },
+          { nombre: 'Diseñador', id: 'dise' },
+          { nombre: 'Admin', id: 'admin' }
+        ];
+        break;
+
+    }
 
     this.forma.controls.selBandeja.setValue(this.optBandeja[0].id);
 
@@ -170,7 +202,7 @@ export class MiBandejaComponent implements OnInit {
 
   }
 
-  formularioAdmin(): void {
+  formularioAdmin(role: string): void {
 
     this.forma.controls.usuarios.setValue(this.userFake);
 
@@ -180,7 +212,22 @@ export class MiBandejaComponent implements OnInit {
       usuarios: ['null']
     });
 
-    this.seleccionarBandeja();
+    this.seleccionarBandeja(role);
+    this.cargarSucursales();
+    // this.cargarColaboradores();
+  }
+
+  formularioProduccionVIP(role: string): void {
+
+    this.forma.controls.usuarios.setValue(this.userFake);
+
+    this.forma = this.fb.group({
+      selBandeja: ['null'],
+      sucursal: ['null'],
+      usuarios: ['null']
+    });
+
+    this.seleccionarBandeja(role);
     this.cargarSucursales();
     // this.cargarColaboradores();
   }
@@ -253,7 +300,7 @@ export class MiBandejaComponent implements OnInit {
           sucursal: valSucursal
         };
 
-        // console.log(data);
+        console.log(data);
 
         if (data.bandejas !== 'null') {
           data.bandejas = valBandeja;
@@ -294,6 +341,25 @@ export class MiBandejaComponent implements OnInit {
             // console.log(pedidos);
             this.pedidos = pedidos;
           });
+      });
+  }
+
+  cargarPedidosPorRole(): void {
+
+    this.store.select('login').pipe(first())
+      .subscribe(worker => {
+
+
+        const datos = {
+          token: worker.token,
+          role: worker.usuario.colaborador_role,
+          idSucursalWorker: worker.usuario.sucursal._id,
+          idUsuario: worker.usuario._id
+        };
+
+        this.pedidoService.obtenerPedidosPorRole(datos).subscribe((pedidos: Pedido) => {
+          this.pedidos = pedidos;
+        });
       });
   }
 
