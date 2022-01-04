@@ -7,7 +7,7 @@ import { SucursalService } from '../../services/sucursal.service';
 import { Sucursal, SucursalesDB } from '../../interfaces/sucursales';
 import { UserService } from '../../services/user.service';
 import { UsuarioWorker, Usuario } from '../../interfaces/resp-worker';
-import { PedidoService } from '../../services/pedido.service';
+import { Data, PedidoService } from '../../services/pedido.service';
 import { Pedido, PedidoDB } from '../../interfaces/pedido';
 import { Productospedido } from '../../interfaces/producto-pedido';
 import { ObjTotales, obtenerTotalesPedido } from '../../reducers/totales-pedido/totales.actions';
@@ -69,22 +69,32 @@ export class MiBandejaComponent implements OnInit {
           this.formularioAdmin('SuperRole');
           this.cargarTodosPedidos();
 
+        } else if (worker.ok === true && worker.usuario.colaborador_role === 'VendedorVIPRole') {
+
+          this.formularioAdmin('SuperRole');
+          this.cargarTodosPedidos();
+
         } else if (worker.ok === true && worker.usuario.colaborador_role === 'VendedorNormalRole') {
 
+          this.role = 'normal';
           this.cargarPedidosVendedor(worker);
 
         } else if (worker.ok === true && worker.usuario.colaborador_role === 'ProduccionVIPRole') {
+
+          this.forma.controls.usuarios.disable();
+          this.forma.controls.selBandeja.disable();
 
           this.cargarPedidosPorRole();
           this.formularioProduccionVIP('ProduccionVIPRole');
 
         } else if (worker.ok === true && worker.usuario.colaborador_role === 'ProduccionNormalRole') {
 
-          this.role = worker.usuario.colaborador_role;
+          this.role = 'normal';
           this.cargarPedidosProduccion(worker);
 
         } else if (worker.ok === true && worker.usuario.colaborador_role === 'DiseniadorRole') {
 
+          this.role = 'normal';
           this.cargarPedidosDiseniador(worker);
         }
       });
@@ -116,7 +126,6 @@ export class MiBandejaComponent implements OnInit {
           { nombre: 'Admin', id: 'admin' }
         ];
         break;
-
     }
 
     this.forma.controls.selBandeja.setValue(this.optBandeja[0].id);
@@ -235,10 +244,10 @@ export class MiBandejaComponent implements OnInit {
   cargarPedidosVendedor(worker: Usuario): void {
     // console.log(worker);
 
-    const data = {
+    const data: Data = {
       token: worker.token,
       role: worker.usuario.colaborador_role,
-      idSUcursalWorker: worker.usuario.sucursal._id,
+      idSucursalWorker: worker.usuario.sucursal._id,
       idUsuario: worker.usuario._id
     };
 
@@ -252,10 +261,10 @@ export class MiBandejaComponent implements OnInit {
   cargarPedidosProduccion(worker: Usuario): void {
     // console.log(worker);
 
-    const data = {
+    const data: Data = {
       token: worker.token,
       role: worker.usuario.colaborador_role,
-      idSUcursalWorker: worker.usuario.sucursal._id,
+      idSucursalWorker: worker.usuario.sucursal._id,
       idUsuario: worker.usuario._id
     };
 
@@ -269,10 +278,10 @@ export class MiBandejaComponent implements OnInit {
   cargarPedidosDiseniador(worker: Usuario): void {
     // console.log(worker);
 
-    const data = {
+    const data: Data = {
       token: worker.token,
       role: worker.usuario.colaborador_role,
-      idSUcursalWorker: worker.usuario.sucursal._id,
+      idSucursalWorker: worker.usuario.sucursal._id,
       idUsuario: worker.usuario._id
     };
 
@@ -300,8 +309,6 @@ export class MiBandejaComponent implements OnInit {
           sucursal: valSucursal
         };
 
-        console.log(data);
-
         if (data.bandejas !== 'null') {
           data.bandejas = valBandeja;
         }
@@ -316,7 +323,6 @@ export class MiBandejaComponent implements OnInit {
           data.userID = dataUser._id;
 
         }
-
 
         if (data.sucursal !== 'null') {
           data.sucursal = valSucursal;

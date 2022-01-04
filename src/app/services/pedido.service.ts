@@ -91,18 +91,22 @@ export class PedidoService {
       .pipe(map(resp => resp));
   }
 
-  obtenerPedidosPorRole(data: any): Observable<any> {
+  obtenerPedidosPorRole(data: Data): Observable<any> {
 
     const url = `${environment.url}/pedidos/obtenerPedidosPorRole`;
 
     // tslint:disable-next-line: max-line-length
-    // const header = new HttpHeaders({ token: data.token, role: data.role, idSUcursalWorker: data.idSUcursalWorker, idUsuario: data.idUsuario });
-    // tslint:disable-next-line: max-line-length
-    const header = new HttpHeaders({ token: data.token, role: data.role, idSucursalWorker: data.idSucursalWorker, idUsuario: data.idUsuario });
+    const header = new HttpHeaders({ 'Content-Type': 'application/json', token: data.token, role: data.role, idSUcursalWorker: data.idSucursalWorker, idUsuario: data.idUsuario });
 
-    // console.log(data);
     return this.http.get(url, { headers: header })
       .pipe(map(resp => resp));
   }
 
+}
+
+export interface Data {
+  token: string;
+  role?: string;
+  idSucursalWorker?: string;
+  idUsuario?: string;
 }
