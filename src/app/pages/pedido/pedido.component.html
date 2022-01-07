@@ -117,7 +117,7 @@
                         </div>
 
                         <!-- diseniador -->
-                        <div>
+                        <div *ngIf="role !== 'DiseniadorRole'">
                             <label class="form-label">
                                 Diseñador:
                                 <i class="fas fa-feather-alt" role="button" (click)="cargarDistribucion()"></i>
@@ -172,8 +172,8 @@
 
                         <!-- botones acciones -->
                         <div id="wrap-buttons-acciones">
-                            <span *ngIf="role === 'DiseniadorRole'"></span>
-                            <button class="buttons" type="submit" *ngIf="role !== 'DiseniadorRole'">Guardar Cambios</button>
+                            <button class="buttons" type="submit">Guardar
+                                Cambios</button>
 
                             <div id="wrap-acciones">
                                 <button class="buttons" type="button" data-bs-toggle="collapse"

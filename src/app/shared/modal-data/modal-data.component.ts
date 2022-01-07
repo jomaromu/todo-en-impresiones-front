@@ -339,6 +339,9 @@ export class ModalDataComponent implements OnInit {
       return;
     }
 
+    // console.log(Number(this.formaPagos.controls.monto.value));
+
+    // return;
     this.store.dispatch(loadingAction.cargarLoading());
 
     this.store.select('login').pipe(first())

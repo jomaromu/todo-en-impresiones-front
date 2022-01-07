@@ -560,9 +560,9 @@ export class PedidoComponent implements OnInit {
 
     const mapPagos = pedido.pedidoDB.pagos_pedido.map(pago => {
 
-      // if (pago.estado === false) {
-      //   return 0;
-      // }
+      if (pago.estado === false) {
+        return 0;
+      }
       return pago.monto;
     });
 
@@ -589,7 +589,7 @@ export class PedidoComponent implements OnInit {
 
     if (itbms === true) {
 
-      itbm = totalPedido * 0.07;
+      itbm = Number((totalPedido * 0.07).toPrecision(2));
       const subtotal = (totalPedido + itbm);
       const total = (subtotal - totalPagos);
 
