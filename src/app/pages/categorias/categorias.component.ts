@@ -71,7 +71,6 @@ export class CategoriasComponent implements OnInit, AfterContentChecked {
 
         this.categoriaService.obtenerCategorias(worker.token)
           .subscribe((categorias: Categoria) => {
-            // console.log(categorias);
 
             if (categorias.ok === false) {
               console.log('error');

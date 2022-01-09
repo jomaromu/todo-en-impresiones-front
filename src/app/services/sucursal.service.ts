@@ -16,7 +16,7 @@ export class SucursalService {
 
   crearSucursal(data: any): Observable<any> {
 
-    const url = `${environment.url}/sucursales/nuevaSucursal`;
+    const url = `${environment.urlSucursal}/sucursales/nuevaSucursal`;
 
     const header = new HttpHeaders({ token: data.token });
 
@@ -31,7 +31,7 @@ export class SucursalService {
 
   obtenerSucursales(token: string): Observable<any> {
 
-    const url = `${environment.url}/sucursales/obtenerTodasSucursales`;
+    const url = `${environment.urlSucursal}/sucursales/obtenerTodasSucursales`;
     const header = new HttpHeaders({ token });
 
     return this.http.get(url, { headers: header })
@@ -44,7 +44,7 @@ export class SucursalService {
 
   obtenerSucursalID(id: string, token: string): Observable<any> {
 
-    const url = `${environment.url}/sucursales/obtenerSucursalID`;
+    const url = `${environment.urlSucursal}/sucursales/obtenerSucursalID`;
     const header = new HttpHeaders({ id, token });
 
     return this.http.get(url, { headers: header })
@@ -57,7 +57,7 @@ export class SucursalService {
 
   editarSucursalID(id: string, token: string, data: any): Observable<any> {
 
-    const url = `${environment.url}/sucursales/editarSucursal`;
+    const url = `${environment.urlSucursal}/sucursales/editarSucursal`;
     const header = new HttpHeaders({ id, estado: data.estado, token });
 
     return this.http.put(url, data, { headers: header })
@@ -69,7 +69,7 @@ export class SucursalService {
 
   eliminarSucursalID(id: string, token: string): Observable<any> {
 
-    const url = `${environment.url}/sucursales/eliminarSucursal`;
+    const url = `${environment.urlSucursal}/sucursales/eliminarSucursal`;
     const header = new HttpHeaders({ id, token });
 
     return this.http.delete(url, { headers: header })

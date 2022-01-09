@@ -15,7 +15,7 @@ export class PedidoService {
 
   crearPedido(data: any): Observable<any> {
 
-    const url = `${environment.url}/pedidos/crearPedido`;
+    const url = `${environment.urlPedido}/pedidos/crearPedido`;
 
     const header = new HttpHeaders({ token: data.token, cliente: data.cliente, sucursal: data.sucursal, vendedor: data.vendedor });
 
@@ -30,7 +30,7 @@ export class PedidoService {
 
   editarPedido(data: any, token: string): Observable<any> {
 
-    const url = `${environment.url}/pedidos/editarPedido`;
+    const url = `${environment.urlPedido}/pedidos/editarPedido`;
     const header = new HttpHeaders({ token, id: data.id });
 
     return this.http.put(url, data, { headers: header })
@@ -41,7 +41,7 @@ export class PedidoService {
 
   obtenerPedidos(token: string): Observable<any> {
 
-    const url = `${environment.url}/pedidos/obtenerTodos`;
+    const url = `${environment.urlPedido}/pedidos/obtenerTodos`;
     const header = new HttpHeaders({ token });
 
     return this.http.get(url, { headers: header })
@@ -54,7 +54,7 @@ export class PedidoService {
 
   obtenerPedido(data: any): Observable<any> {
 
-    const url = `${environment.url}/pedidos/obtenerPedidoID`;
+    const url = `${environment.urlPedido}/pedidos/obtenerPedidoID`;
     const header = new HttpHeaders({ token: data.token, id: data.idPedido });
 
     return this.http.get(url, { headers: header })
@@ -67,7 +67,7 @@ export class PedidoService {
 
   busquedaBandejas(data: any): Observable<any> {
 
-    const url = `${environment.url}/pedidos/busquedaBandeja`;
+    const url = `${environment.urlPedido}/pedidos/busquedaBandeja`;
 
     // tslint:disable-next-line: max-line-length
     const header = new HttpHeaders({ token: data.token, colRole: data.colRole, sucursal: data.sucursal, userID: data.userID, bandejas: data.bandejas });
@@ -83,7 +83,7 @@ export class PedidoService {
 
   obtenerPedidosCriterio(data: any): Observable<any> {
 
-    const url = `${environment.url}/pedidos/obtenerPedidosCriterio`;
+    const url = `${environment.urlPedido}/pedidos/obtenerPedidosCriterio`;
 
     const header = new HttpHeaders({ token: data.token, criterio: data.criterio });
 
@@ -93,7 +93,7 @@ export class PedidoService {
 
   obtenerPedidosPorRole(data: Data): Observable<any> {
 
-    const url = `${environment.url}/pedidos/obtenerPedidosPorRole`;
+    const url = `${environment.urlPedido}/pedidos/obtenerPedidosPorRole`;
 
     // tslint:disable-next-line: max-line-length
     const header = new HttpHeaders({ 'Content-Type': 'application/json', token: data.token, role: data.role, idSUcursalWorker: data.idSucursalWorker, idUsuario: data.idUsuario });

@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { CurrencyPipe } from '@angular/common';
 
@@ -22,6 +22,9 @@ import { effectsArray } from './services/index';
 
 // socket
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+
+// Servicios
+import { CategoriaService } from './services/categoria.service';
 
 const config: SocketIoConfig = { url: environment.url, options: {} };
 
@@ -43,7 +46,8 @@ const config: SocketIoConfig = { url: environment.url, options: {} };
     SocketIoModule.forRoot(config)
   ],
   providers: [
-    CurrencyPipe
+    CurrencyPipe,
+    { provide: HTTP_INTERCEPTORS, useClass: CategoriaService, multi: true }
   ],
   bootstrap: [AppComponent],
   exports: []

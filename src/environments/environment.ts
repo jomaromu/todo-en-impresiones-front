@@ -5,7 +5,15 @@
 export const environment = {
   production: false,
   // url: 'http://190.218.41.21:3000'
-  url: 'http://localhost:3000'
+  url: 'http://localhost:3500',
+  urlWorker: 'http://localhost:3001',
+  urlClient: 'http://localhost:3002',
+  urlSucursal: 'http://localhost:3003',
+  urlPedido: 'http://localhost:3004',
+  urlProducto: 'http://localhost:3005',
+  urlAyuda: 'http://localhost:3006',
+  urlOrigen: 'http://localhost:3007',
+  urlCategoria: 'http://localhost:3008',
 };
 
 /*

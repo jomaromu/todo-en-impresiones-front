@@ -15,7 +15,7 @@ export class UserService {
 
   crearUsuario(data: any): Observable<any> {
 
-    const url = `${environment.url}/worker/nuevoUsuario`;
+    const url = `${environment.urlWorker}/worker/nuevoUsuario`;
 
     const header = new HttpHeaders({ token: data.token });
 
@@ -30,7 +30,7 @@ export class UserService {
 
   login(usuario: any): Observable<any> {
 
-    const url = `${environment.url}/worker/loguearUsuario`;
+    const url = `${environment.urlWorker}/worker/loguearUsuario`;
 
     return this.http.post(url, usuario)
       .pipe(
@@ -42,7 +42,7 @@ export class UserService {
 
   decodificarToken(token: string): Observable<any> {
 
-    const url = `${environment.url}/worker/decodificarToken`;
+    const url = `${environment.urlWorker}/worker/decodificarToken`;
     const header = new HttpHeaders({ token });
 
     return this.http.get(url, { headers: header })
@@ -55,7 +55,7 @@ export class UserService {
 
   refrescarToken(idUsuario: any): Observable<any> {
 
-    const url = `${environment.url}/worker/refrescarToken`;
+    const url = `${environment.urlWorker}/worker/refrescarToken`;
 
     return this.http.post(url, { idUsuario })
       .pipe(
@@ -67,7 +67,7 @@ export class UserService {
 
   obtenerUsuarios(token: string): Observable<any> {
 
-    const url = `${environment.url}/worker/obtenerTodosUsuarios`;
+    const url = `${environment.urlWorker}/worker/obtenerTodosUsuarios`;
     const header = new HttpHeaders({ token });
 
     return this.http.get(url, { headers: header })
@@ -80,7 +80,7 @@ export class UserService {
 
   obtenerUsuarioID(idUsuario: string, token: string): Observable<any> {
 
-    const url = `${environment.url}/worker/obtenerUsuarioID`;
+    const url = `${environment.urlWorker}/worker/obtenerUsuarioID`;
     const header = new HttpHeaders({ id: idUsuario, token });
 
     return this.http.get(url, { headers: header })
@@ -94,7 +94,7 @@ export class UserService {
   // Obtener todos los usuarios
   obtenerRoles(token: string): Observable<any> {
 
-    const url = `${environment.url}/colrole/obtenerTodos`;
+    const url = `${environment.urlWorker}/colrole/obtenerTodos`;
     const header = new HttpHeaders({ token });
 
     return this.http.get(url, { headers: header })
@@ -108,7 +108,7 @@ export class UserService {
   // Obtener usuarios especificos por role
   obtenerUsuariosRole(token: string, role: string): Observable<any> {
 
-    const url = `${environment.url}/worker/obtenerUsuariosRole`;
+    const url = `${environment.urlWorker}/worker/obtenerUsuariosRole`;
     const header = new HttpHeaders({ token, role });
 
     return this.http.get(url, { headers: header })
@@ -121,7 +121,7 @@ export class UserService {
 
   editarUsuarioID(id: string, token: string, data: any): Observable<any> {
 
-    const url = `${environment.url}/worker/editarUsuario`;
+    const url = `${environment.urlWorker}/worker/editarUsuario`;
     const header = new HttpHeaders({ id, estado: data.estado, colaborador_role: data.colaborador_role, token });
 
     return this.http.put(url, data, { headers: header })
@@ -133,7 +133,7 @@ export class UserService {
 
   eliminarUsuarioID(id: string, token: string): Observable<any> {
 
-    const url = `${environment.url}/worker/eliminarUsuario`;
+    const url = `${environment.urlWorker}/worker/eliminarUsuario`;
     const header = new HttpHeaders({ id, token });
 
     return this.http.delete(url, { headers: header })
@@ -145,7 +145,7 @@ export class UserService {
 
   cargarUsuariosSucursalRole(data: any): Observable<any> {
 
-    const url = `${environment.url}/worker/cargarUsuariosSucursalRole`;
+    const url = `${environment.urlWorker}/worker/cargarUsuariosSucursalRole`;
 
     const header = new HttpHeaders({ role: data.role, sucursal: data.sucursal, token: data.token });
 
@@ -156,7 +156,7 @@ export class UserService {
   // clientes
   obtenerClientes(token: string): Observable<any> {
 
-    const url = `${environment.url}/client/obtenerTodosUsuarios`;
+    const url = `${environment.urlClient}/client/obtenerTodosUsuarios`;
     const header = new HttpHeaders({ token });
 
     return this.http.get(url, { headers: header })
@@ -169,7 +169,7 @@ export class UserService {
 
   obtenerClienteID(idUsuario: string, token: string): Observable<any> {
 
-    const url = `${environment.url}/client/obtenerUsuarioID`;
+    const url = `${environment.urlClient}/client/obtenerUsuarioID`;
     const header = new HttpHeaders({ id: idUsuario, token });
 
     return this.http.get(url, { headers: header })
@@ -182,7 +182,7 @@ export class UserService {
 
   obtenerClienteRoles(token: string): Observable<any> {
 
-    const url = `${environment.url}/clientRole/obtenerTodos`;
+    const url = `${environment.urlClient}/clientRole/obtenerTodos`;
     const header = new HttpHeaders({ token });
 
     return this.http.get(url, { headers: header })
@@ -195,7 +195,7 @@ export class UserService {
 
   crearCliente(data: any): Observable<any> {
 
-    const url = `${environment.url}/client/nuevoUsuario`;
+    const url = `${environment.urlClient}/client/nuevoUsuario`;
 
     const header = new HttpHeaders({ token: data.token });
 
@@ -210,7 +210,7 @@ export class UserService {
 
   eliminarClienteID(id: string, token: string): Observable<any> {
 
-    const url = `${environment.url}/client/eliminarUsuario`;
+    const url = `${environment.urlClient}/client/eliminarUsuario`;
     const header = new HttpHeaders({ id, token });
 
     return this.http.delete(url, { headers: header })
@@ -222,7 +222,7 @@ export class UserService {
 
   editarClienteID(id: string, token: string, data: any): Observable<any> {
 
-    const url = `${environment.url}/client/editarUsuario`;
+    const url = `${environment.urlClient}/client/editarUsuario`;
     const header = new HttpHeaders({ id, estado: data.estado, client_role: data.client_role, token });
 
     return this.http.put(url, data, { headers: header })
@@ -234,7 +234,7 @@ export class UserService {
 
   obtenerClienteCriterioNombre(data: any): Observable<any> {
 
-    const url = `${environment.url}/client/obtenerUsuarioCriterioNombre`;
+    const url = `${environment.urlClient}/client/obtenerUsuarioCriterioNombre`;
     const header = new HttpHeaders({ token: data.token, criterioNombre: data.criterioNombre });
 
     return this.http.get(url, { headers: header })
@@ -247,7 +247,7 @@ export class UserService {
 
   obtenerClienteCriterioTelefono(data: any): Observable<any> {
 
-    const url = `${environment.url}/client/obtenerUsuarioTel`;
+    const url = `${environment.urlClient}/client/obtenerUsuarioTel`;
     const header = new HttpHeaders({ token: data.token, telefono: data.telefono });
 
     return this.http.get(url, { headers: header })

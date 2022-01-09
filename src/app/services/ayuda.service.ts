@@ -15,7 +15,7 @@ export class AyudaService {
 
   obtenerAyudas(token: string): Observable<any> {
 
-    const url = `${environment.url}/ayuda/obtenerTodas`;
+    const url = `${environment.urlAyuda}/ayuda/obtenerTodas`;
     const header = new HttpHeaders({ token });
 
     return this.http.get(url, { headers: header })
@@ -28,7 +28,7 @@ export class AyudaService {
 
   crearAyuda(data: any): Observable<any> {
 
-    const url = `${environment.url}/ayuda/crearAyuda`;
+    const url = `${environment.urlAyuda}/ayuda/crearAyuda`;
     const header = new HttpHeaders({ token: data.token });
 
     return this.http.post(url, data, { headers: header })
@@ -42,7 +42,7 @@ export class AyudaService {
 
   obtenerAyudaID(id: string, token: string): Observable<any> {
 
-    const url = `${environment.url}/ayuda/obtenerAyudaID`;
+    const url = `${environment.urlAyuda}/ayuda/obtenerAyudaID`;
     const header = new HttpHeaders({ id, token });
 
     return this.http.get(url, { headers: header })
@@ -55,7 +55,7 @@ export class AyudaService {
 
   editarAyudaID(id: string, data: any): Observable<any> {
 
-    const url = `${environment.url}/ayuda/editarAyuda`;
+    const url = `${environment.urlAyuda}/ayuda/editarAyuda`;
     const header = new HttpHeaders({ id, token: data.token });
 
     return this.http.put(url, data, { headers: header })
@@ -67,7 +67,7 @@ export class AyudaService {
 
   eliminarAyudaID(id: string, token: string): Observable<any> {
 
-    const url = `${environment.url}/ayuda/eliminarAyuda`;
+    const url = `${environment.urlAyuda}/ayuda/eliminarAyuda`;
     const header = new HttpHeaders({ id, token });
 
     return this.http.delete(url, { headers: header })

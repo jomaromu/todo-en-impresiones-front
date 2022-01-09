@@ -15,7 +15,7 @@ export class ProductoService {
 
   obtenerProductos(token: string): Observable<any> {
 
-    const url = `${environment.url}/product/obtenerProductos`;
+    const url = `${environment.urlProducto}/product/obtenerProductos`;
     const header = new HttpHeaders({ token });
 
     return this.http.get(url, { headers: header })
@@ -28,7 +28,7 @@ export class ProductoService {
 
   crearProducto(data: any): Observable<any> {
 
-    const url = `${environment.url}/product/nuevoProducto`;
+    const url = `${environment.urlProducto}/product/nuevoProducto`;
 
     const header = new HttpHeaders({ token: data.token, sucursal: data.sucursal });
 
@@ -43,7 +43,7 @@ export class ProductoService {
 
   obtenerProductoID(id: string, token: string): Observable<any> {
 
-    const url = `${environment.url}/product/obtenerProductoID`;
+    const url = `${environment.urlProducto}/product/obtenerProductoID`;
     const header = new HttpHeaders({ id, token });
 
     return this.http.get(url, { headers: header })
@@ -56,7 +56,7 @@ export class ProductoService {
 
   obtenerProductoCriterioNombre(data: any): Observable<any> {
 
-    const url = `${environment.url}/product/obtenerProductoCriterioNombre`;
+    const url = `${environment.urlProducto}/product/obtenerProductoCriterioNombre`;
 
     const header = new HttpHeaders({ token: data.token, criterioNombre: data.criterioNombre });
 
@@ -66,7 +66,7 @@ export class ProductoService {
 
   eliminarProductoID(id: string, token: string): Observable<any> {
 
-    const url = `${environment.url}/product/eliminarProducto`;
+    const url = `${environment.urlProducto}/product/eliminarProducto`;
     const header = new HttpHeaders({ id, token });
 
     return this.http.delete(url, { headers: header })
@@ -78,7 +78,7 @@ export class ProductoService {
 
   editarProductoID(id: string, token: string, data: any): Observable<any> {
 
-    const url = `${environment.url}/product/editarProducto`;
+    const url = `${environment.urlProducto}/product/editarProducto`;
     const header = new HttpHeaders({ id, token });
 
     return this.http.put(url, data, { headers: header })
